@@ -3,6 +3,8 @@ Counterr is a light-weight command line tool that takes as inputs alignment file
 
 The tool was developed with Oxford Nanopore Technology sequencers in mind but is general and applicable to other sequencing platforms such as Illumina and PacBio.
 
+For any inquiry about the tool, please e-mail us at jae@dayzerodiagnostics.com
+
 ## Requirements
 - Python 2.7/Python 3.4 or later
 - pysam>=0.14.1
