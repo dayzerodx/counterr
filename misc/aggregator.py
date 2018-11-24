@@ -5,11 +5,11 @@ Notes:
 - The script assumes that all statistics have been computed.
 - Certain figures are not included in reports.pdf.
 """
-from swordfish.util import *
-from swordfish.tables import *
-from swordfish.plots import *
-from swordfish.counters import compute_indel_rates
-from swordfish.IO import *
+from counterr.util import *
+from counterr.tables import *
+from counterr.plots import *
+from counterr.counters import compute_indel_rates
+from counterr.IO import *
 
 # ---- User must specify the output directories (out_dir/stats/) to be aggregated here.
 output_dirs = []
