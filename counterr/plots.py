@@ -107,28 +107,29 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
     plt.close()
 
     # -- Length distribution of aligned and unaligned regions
-    try:
-        len_max = max(max(lens_in), max(lens_out))*1.05    
-    except:
-        len_max = max(lens_in) * 1.05
-
-    bins = np.arange(0, len_max, len_max/100.)
+    plt.close()    
     fig_name = os.path.join(output_dir, "per_read_dist_len_in_or_out_align.png")
-    plt.close()
     fig, ax = plt.subplots(1, figsize=(10, 7))
-    # pass
-    ax.hist(lens_out, bins=bins, color="red", label="Unaligned: %d" % len(lens_out), histtype="step", normed=True)
-    ax.hist(lens_in, bins=bins, color="black", label="Aligned: %d" % len(lens_in), histtype="step", normed=True)
-    ax.set_xlabel("Length", fontsize=ft_size)
-    ax.set_xlim([0, len_max])
-    ax.legend(loc="upper right", fontsize=ft_size)    
-    ax.set_title("# = the number of reads", fontsize=ft_size)        
-    plt.savefig(fig_name, dpi=200, bbox_inches="tight")
-    if report is not None:
-        plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
-        report.savefig(fig, dpi=200)
+    lens_max_in, lens_max_out = 0, 0
+    if len(lens_in) > 0:
+        len_max_in = max(lens_in)
+    if len(lens_out) > 0:
+        len_max_out = max(lens_out)
+    len_max = max(len_max_in, len_max_out)*1.05
+    if len_max > 10: # Otherwise what's the point?
+        bins = np.arange(0, len_max, len_max/100.)        
+        ax.hist(lens_in, bins=bins, color="black", label="Aligned: %d" % len(lens_in), histtype="step", normed=True)
+        ax.hist(lens_out, bins=bins, color="red", label="Unaligned: %d" % len(lens_out), histtype="step", normed=True)
+        ax.set_xlabel("Length", fontsize=ft_size)
+        ax.set_xlim([0, len_max])
+        ax.legend(loc="upper right", fontsize=ft_size)    
+        ax.set_title("# = the number of reads", fontsize=ft_size)        
+        plt.savefig(fig_name, dpi=200, bbox_inches="tight")
+        if report is not None:
+            plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
+            report.savefig(fig, dpi=200)
 
-    plt.close()
+        plt.close()
 
 def plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del, output_dir, report=None, num_pts_max=50000):
     len_max_lim = np.percentile(lens, 99.9) * 1.1
