@@ -92,9 +92,6 @@ def main():
 
     # --- Load the data
     contigs, reads_pass, reads_fail = load_files(asm, bam, bai, len_min_contig, read_filter, lim, verbose)
-    if len(reads_pass) == 0:
-        print("No read passed the filter.\nTo allow more reads, please adjust the filter parameters: mapq_thres, len_min_read, len_min_aln, len_min_contig")
-        sys.exit()
 
 
     # ---- Compute Q-score related statistics.

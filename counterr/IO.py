@@ -80,6 +80,10 @@ def load_files(asm, bam, bai, len_min_contig, read_filter, lim, verbose):
     if verbose:
         print("Number of reads that passed/failed the filter: %d/%d" % (N_pass, N_fail))
 
+    if N_pass == 0:
+        print("No read passed the filter.\nTo allow more reads, please adjust the filter parameters: mapq_thres, len_min_read, len_min_aln, len_min_contig")
+        sys.exit()        
+
     return contigs, reads_pass, reads_fail
 
 def save_per_read_stats_fail(item_to_save, output_dir):
