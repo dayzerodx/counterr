@@ -63,7 +63,7 @@ def main():
             assert False, "The index file (.bai) was not found."
     # Check to make sure output_dir exists. If not, make one
     if not os.path.exists(output_dir):
-        print("The output directory does not exists. Creating one.")
+        print("The output directory does not exist. Creating one.")
         os.mkdir(output_dir)
     else:
         if len(os.listdir(output_dir)) != 0:
