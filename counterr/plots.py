@@ -1,7 +1,7 @@
 from .util import *
 ft_size = 15
 
-def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir, report=None):
+def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir, report=None, num_pts_max=50000):
     # -- Q mean/med distribution
     fig_name = os.path.join(output_dir, "per_read_Q_mean_med_pass_vs_fail.png")
     bins = np.arange(-0.5, 30.5, 1.)
@@ -53,6 +53,9 @@ def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fai
     plt.close()
 
     # -- Q med vs std.
+    means_pass, stds_pass = uniform_downsample([means_pass, stds_pass], num_pts_max)
+    means_fail, stds_fail = uniform_downsample([means_fail, stds_fail], num_pts_max)
+
     fig_name = os.path.join(output_dir, "per_read_Q_pass_fail_mean_vs_std.png")
     plt.close()
     fig, ax = plt.subplots(1, figsize=(7, 7))
@@ -76,8 +79,10 @@ def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fai
 
     return 
 
-def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir, report=None):
+def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir, report=None, num_pts_max=50000):
     # -- Q med vs std.
+    means_out, stds_out = uniform_downsample([means_out, stds_out], num_pts_max)
+    means_in, stds_in = uniform_downsample([means_in, stds_in], num_pts_max)    
     fig_name = os.path.join(output_dir, "per_read_in_or_out_align_mean_vs_std.png")
     plt.close()
     fig, ax = plt.subplots(1, figsize=(7, 7))
@@ -125,7 +130,7 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
 
     plt.close()
 
-def plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del, output_dir, report=None):
+def plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del, output_dir, report=None, num_pts_max=50000):
     len_max_lim = np.percentile(lens, 99.9) * 1.1
     w = (np.percentile(lens, 90) - np.percentile(lens, 10))/50.
     lens = lens.astype(float) + 1e-6
@@ -147,6 +152,28 @@ def plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins
         report.savefig(fig, dpi=200)
 
     plt.close()
+
+    # ---- accuracy and error histogram
+    plt.close()
+    fig, ax1 = plt.subplots(1, 1, figsize=(7, 5))
+    bins = np.arange(0, 1.005, 0.005)
+    ax1.hist(nums_match/lens_aligned, color="green", histtype="step", label="Match", lw=1, bins=bins)
+    ax1.hist(nums_sub/lens_aligned, color="red", histtype="step", label="Sub.", lw=1, bins=bins)
+    ax1.hist(nums_del/lens_aligned, color="orange", histtype="step", label="Deletion", lw=1, bins=bins)
+    ax1.hist(nums_ins/lens_aligned, color="blue", histtype="step", label="Insertion", lw=1, bins=bins)
+    ax1.legend(loc="upper right", fontsize=ft_size)
+    ax1.set_xlabel("Proportion", fontsize=ft_size)
+    ax1.set_ylabel("Counts", fontsize=ft_size)
+    ax1.set_xlim([0, 1])
+    fig_name = os.path.join(output_dir, "per_read_hist_errors.png")
+    plt.savefig(fig_name, dpi=200, bbox_inches="tight")
+    if report is not None:
+        plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
+        report.savefig(fig, dpi=200)
+
+    plt.close()    
+
+    lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del = uniform_downsample([lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del], num_pts_max)
 
     # -- Length vs. aligned length
     plt.close()
@@ -207,26 +234,6 @@ def plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
         report.savefig(fig, dpi=200)
-    plt.close()
-
-    # ---- accuracy and error histogram
-    plt.close()
-    fig, ax1 = plt.subplots(1, 1, figsize=(7, 5))
-    bins = np.arange(0, 1.005, 0.005)
-    ax1.hist(nums_match/lens_aligned, color="green", histtype="step", label="Match", lw=1, bins=bins)
-    ax1.hist(nums_sub/lens_aligned, color="red", histtype="step", label="Sub.", lw=1, bins=bins)
-    ax1.hist(nums_del/lens_aligned, color="orange", histtype="step", label="Deletion", lw=1, bins=bins)
-    ax1.hist(nums_ins/lens_aligned, color="blue", histtype="step", label="Insertion", lw=1, bins=bins)
-    ax1.legend(loc="upper right", fontsize=ft_size)
-    ax1.set_xlabel("Proportion", fontsize=ft_size)
-    ax1.set_ylabel("Counts", fontsize=ft_size)
-    ax1.set_xlim([0, 1])
-    fig_name = os.path.join(output_dir, "per_read_hist_errors.png")
-    plt.savefig(fig_name, dpi=200, bbox_inches="tight")
-    if report is not None:
-        plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
-        report.savefig(fig, dpi=200)
-
     plt.close()
 
     return

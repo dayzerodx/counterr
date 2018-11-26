@@ -190,6 +190,9 @@ optional arguments:
                         the reverse complement mapped reads (default: False)
   -lim LIM              pass this flag to run the program with 'lim' randomly
                         selected reads (both pass and fail) (default: -1)
+  -num_pts_max NUM_PTS_MAX
+                        maximum number of points to be plotted for any scatter
+                        plots (default: 50000)                        
 ```
 
 ## Known issues and work-arounds

@@ -27,6 +27,7 @@ def main():
     parser.add_argument("-len_trim_contig_edge", help="length of the contig edge to trim before computing various statistics", type=int, default=1)
     parser.add_argument("-use_recorded", help="pass this flag to NOT perform reverse complementing of the reverse complement mapped reads", action="store_true")
     parser.add_argument("-lim", help="pass this flag to run the program with 'lim' randomly selected reads (both pass and fail)", type=int, default=-1)
+    parser.add_argument("-num_pts_max", help="maximum number of points to be plotted for any scatter plots", type=int, default=100000)
     args = parser.parse_args()
 
     # Create variables of the same name
@@ -46,6 +47,7 @@ def main():
     len_min_aln = args.len_min_aln
     len_trim_contig_edge = args.len_trim_contig_edge
     lim = args.lim
+    num_pts_max = args.num_pts_max
     bitflag = args.bitflag
     if not args.no_figures:
         generate_figures = True
@@ -93,12 +95,12 @@ def main():
     means_pass, meds_pass, stds_pass = mapQ_stats_per_read(reads_pass, verbose=verbose, comment="for pass reads")
     means_fail, meds_fail, stds_fail = mapQ_stats_per_read(reads_fail, verbose=verbose, comment="for fail reads")
     if generate_figures:
-        plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir_figures, report=report)
+        plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir_figures, report=report, num_pts_max=num_pts_max)
 
     # Mean/std Q-score per read by aligned/unaligned region
     means_in, stds_in, lens_in, means_out, stds_out, lens_out = mapQ_stats_aligned_readsegment(reads_pass, verbose=verbose)
     if generate_figures:
-        plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir_figures, report=report)
+        plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir_figures, report=report, num_pts_max=num_pts_max)
 
 
     # ---- Reconstruct all alignments that pass the read_filter defined above
@@ -110,7 +112,7 @@ def main():
     nums_match, nums_sub, nums_ins, nums_del, nums_skip, lens_aligned = count_errors_per_read(alns, verbose=verbose)
     lens -= nums_skip # Exclude regions where reference is non-ACGT.
     if generate_figures:
-        plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del, output_dir_figures, report=report)
+        plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del, output_dir_figures, report=report, num_pts_max=num_pts_max)
 
 
     # ---- Save per-read statsitics

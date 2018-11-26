@@ -121,3 +121,26 @@ def has_hp(kmer):
         else:
             idx += 1
     return False
+
+def uniform_downsample(a_list, num_pts_max):
+    """
+    Input is a list of 1D numpy arrays or lists of the same size. Output is a row-matched downsampled collection with the resulting 1D array size = num_pts_max. If the initial array size is smaller than the max, then return the original lists.
+    """
+    num0 = len(a_list[0])
+    if num0 <= num_pts_max:
+        return a_list
+
+    iselect = np.random.choice(range(num0), replace=False, size=num_pts_max)
+    return_list = []
+    for item in a_list:
+        return_list.append(np.asarray(item)[iselect])
+
+    return return_list
+
+
+
+
+
+
+
+
