@@ -17,6 +17,9 @@ output_dirs = []
 # ---- User must specify the output driectory for the aggregate results.
 aggregate_dir = ""
 
+# ---- User must specify the maximum number of points to be plotted
+num_pts_max = 100000
+
 output_dir_figures = os.path.join(aggregate_dir, "figures")
 output_dir_stats = os.path.join(aggregate_dir, "stats")
 if not os.path.exists(aggregate_dir):
@@ -155,9 +158,9 @@ len_max_indel = int(context_hist_len_ins.shape[1])
 
 
 # ---- Plots and figures based on the aggregated results
-plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir_figures, report=None)
-plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir_figures, report=None)
-plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del, output_dir_figures, report=None)
+plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir_figures, report=None, num_pts_max = num_pts_max)
+plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir_figures, report=None, num_pts_max = num_pts_max)
+plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del, output_dir_figures, report=None, num_pts_max = num_pts_max)
 plot_phredQ_stats(qs, nums_match_q, nums_sub_q, nums_ins_q, nums_err_q, nums_tot_q, output_dir_figures, report=report)
 plot_hist_len_hp_asm(hist_len_hp_asm_, output_dir_figures, report=report)
 plot_dist_len_hp(hist_len_hp, output_dir_figures, report=report)
