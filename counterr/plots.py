@@ -232,6 +232,9 @@ def plot_phredQ_stats(qs, nums_match, nums_sub, nums_ins, nums_err, nums_tot, ou
     # Plot only that has at least one observation
     iselect = nums_tot > 0 
     qs = qs[iselect]
+    if qs.size == 0: # If it appears that phred-Q scores are not available, then terminate early.
+        return
+
     q_max = np.max(qs) + 3
     nums_match = nums_match[iselect]
     nums_sub = nums_sub[iselect]
