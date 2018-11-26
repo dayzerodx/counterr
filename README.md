@@ -28,6 +28,13 @@ python setup.py install
 counterr -h
 ```
 
+To use the latest version of counterr, you can either remove the counterr directory and obtain the latest repo as above or move to the root directory and use the following commands:
+```
+git pull
+rm -r dist/ build/ counterr.egg-info/
+python setup.py install
+```
+
 ## Quick examples
 **Basic use case with terminal outputs**
 ```
