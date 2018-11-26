@@ -110,7 +110,7 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
     plt.close()    
     fig_name = os.path.join(output_dir, "per_read_dist_len_in_or_out_align.png")
     fig, ax = plt.subplots(1, figsize=(10, 7))
-    lens_max_in, lens_max_out = 0, 0
+    len_max_in, len_max_out = 0, 0
     if len(lens_in) > 0:
         len_max_in = max(lens_in)
     if len(lens_out) > 0:
