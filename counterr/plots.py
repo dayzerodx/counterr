@@ -102,7 +102,11 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
     plt.close()
 
     # -- Length distribution of aligned and unaligned regions
-    len_max = max(max(lens_in), max(lens_out))*1.05    
+    try:
+        len_max = max(max(lens_in), max(lens_out))*1.05    
+    except:
+        len_max = max(lens_in) * 1.05
+        
     bins = np.arange(0, len_max, len_max/100.)
     fig_name = os.path.join(output_dir, "per_read_dist_len_in_or_out_align.png")
     plt.close()
