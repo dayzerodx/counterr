@@ -192,7 +192,10 @@ optional arguments:
                         selected reads (both pass and fail) (default: -1)
   -num_pts_max NUM_PTS_MAX
                         maximum number of points to be plotted for any scatter
-                        plots (default: 50000)                        
+                        plots (default: 50000)
+  -report_name REPORT_NAME
+                        the name of the output PDF report if the user wishes
+                        to use a non-default name. (default: report.pdf)                        
 ```
 
 ## Known issues and work-arounds

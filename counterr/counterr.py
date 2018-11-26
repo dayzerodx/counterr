@@ -28,6 +28,7 @@ def main():
     parser.add_argument("-use_recorded", help="pass this flag to NOT perform reverse complementing of the reverse complement mapped reads", action="store_true")
     parser.add_argument("-lim", help="pass this flag to run the program with 'lim' randomly selected reads (both pass and fail)", type=int, default=-1)
     parser.add_argument("-num_pts_max", help="maximum number of points to be plotted for any scatter plots", type=int, default=100000)
+    parser.add_argument("-report_name", help="the name of the output PDF report if the user wishes to use a non-default name.", type=str, default="report.pdf")
     args = parser.parse_args()
 
     # Create variables of the same name
@@ -49,6 +50,7 @@ def main():
     lim = args.lim
     num_pts_max = args.num_pts_max
     bitflag = args.bitflag
+    report_name = args.report_name
     if not args.no_figures:
         generate_figures = True
     else:
@@ -78,7 +80,9 @@ def main():
         os.mkdir(output_dir_stats)
     if generate_figures:
         # Blank PDF to collect all figures into a single file
-        report = PdfPages(os.path.join(output_dir, "report.pdf"))
+        if not report_name.endswith(".pdf"):
+            report_name = ".".join([report_name, "pdf"])
+        report = PdfPages(os.path.join(output_dir, report_name))
     if verbose:
         start = time() # Measure the total time
 
