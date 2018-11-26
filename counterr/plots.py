@@ -384,6 +384,8 @@ def plot_dist_indel(R_ins, R_del, dist_len_del, dist_len_ins, output_dir, fname=
     ax.legend(loc="upper right", fontsize=ft_size)
     ax.set_xticks(range(1, 10))
     ax.set_xlim([1, 10])
+    ax.set_xlabel("Length of indel", fontsize=ft_size)
+    ax.set_ylabel("Probability", fontsize=ft_size)
     max_count = max(np.max(dist_len_del), np.max(dist_len_ins))
     ax.set_ylim([0, 1.0])
     ax.set_title("Ins/del: rate per match", fontsize=ft_size)
