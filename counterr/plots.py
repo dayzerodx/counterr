@@ -106,7 +106,7 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
         len_max = max(max(lens_in), max(lens_out))*1.05    
     except:
         len_max = max(lens_in) * 1.05
-        
+
     bins = np.arange(0, len_max, len_max/100.)
     fig_name = os.path.join(output_dir, "per_read_dist_len_in_or_out_align.png")
     plt.close()
@@ -207,7 +207,6 @@ def plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
         report.savefig(fig, dpi=200)
-
     plt.close()
 
     # ---- accuracy and error histogram
@@ -373,8 +372,8 @@ def plot_dist_indel(R_ins, R_del, dist_len_del, dist_len_ins, output_dir, fname=
 
     length = np.arange(1, dist_len_del.size)
     fig, ax = plt.subplots(1, 1, figsize=(7, 5))
-    ax.plot(length, dist_len_ins[1:], marker="o", ls="--", lw=1, color="black", label="Ins: %.3f%%" % R_ins)
-    ax.plot(length, dist_len_del[1:], marker="o", ls="--", lw=1, color="red", label="del: %.3f%%" % R_del)    
+    ax.plot(length, dist_len_ins[1:], marker="o", ls="--", lw=1, color="black", label="Ins: %.3f%%" % (R_ins * 100))
+    ax.plot(length, dist_len_del[1:], marker="o", ls="--", lw=1, color="red", label="del: %.3f%%" % (R_del * 100))
     ax.legend(loc="upper right", fontsize=ft_size)
     ax.set_xticks(range(1, 10))
     ax.set_xlim([1, 10])
