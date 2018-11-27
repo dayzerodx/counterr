@@ -87,9 +87,8 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
     plt.close()
     fig, ax = plt.subplots(1, figsize=(7, 7))
     # pass
-    ax.scatter(means_out, stds_out, color="red", label="Unaligned: %d" % len(means_out), s=2, edgecolors="none")
-    ax.scatter(means_in, stds_in, color="black", label="Aligned: %d" % len(means_in), s=2, edgecolors="none")
-    ax.set_title("# = the number of reads", fontsize=ft_size)    
+    ax.scatter(means_out, stds_out, color="red", label="Unaligned", s=2, edgecolors="none")
+    ax.scatter(means_in, stds_in, color="black", label="Aligned", s=2, edgecolors="none")
     ax.set_xlabel("Mean", fontsize=ft_size)
     ax.set_ylabel("Std", fontsize=ft_size)
     # ax.set_title("Mean", fontsize = 10)
