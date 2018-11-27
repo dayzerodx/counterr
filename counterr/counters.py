@@ -830,12 +830,12 @@ def split_recontructed_alignment(aln):
     idx_end = 0
     # Keep skipping until non-ACGT letter encountered. Tuck away portions [idx_start:idx_end] and repeat.
     while idx_end < (len_ref-1):
-        if ref[idx_end] in bases_ext:
+        if (ref[idx_end] in bases_ext) and (rd[idx_end] in bases_ext):
             idx_end += 1
         else:
             aln_split.append((ref[idx_start:idx_end], rd[idx_start:idx_end], cig[idx_start:idx_end], Qs[idx_start:idx_end]))
             # Skip over non-ACGT letters
-            while ref[idx_end] not in bases_ext:
+            while (idx_end <= (len_ref-1)) and ((ref[idx_end] not in bases_ext) or (rd[idx_end] not in bases_ext)):
                 idx_end += 1
             idx_start = idx_end
     # Treat the last case separately
