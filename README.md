@@ -1,9 +1,7 @@
 # Counterr
-Counterr is a light-weight command line tool that takes as inputs alignment files (bam/bai) and the corresponding reference (fasta) and outputs summaries (figures/tables) of errors in the reads. The tool computes both context independent and dependent error statistics. The latter is helpful for uncovering systematic errors latent in the sequencing technology used (due to hardware, basecaller, etc.).
+Counterr is a light-weight command line tool that computes errors in sequencing data by comparing the reads to a reference genome. Counterr takes as input an alignment of the reads (bam + bai) and the corresponding reference (fasta) and outputs summaries (figures/tables) of errors in the reads. The tool computes both context independent and context dependent error statistics of the reads. The latter can be particularly helpful for uncovering systematic errors latent in the sequencing technology (due to hardware, basecaller, etc.).
 
-The tool was developed with Oxford Nanopore Technology sequencers in mind but is general and applicable to other sequencing platforms such as Illumina and PacBio.
-
-For any inquiry about the tool, please e-mail us at jae@dayzerodiagnostics.com
+The tool was developed with Oxford Nanopore Technology reads in mind but is general and applicable to other sequencing platforms such as Illumina and PacBio.
 
 ## Requirements
 - Python 2.7/Python 3.4 or later
@@ -18,7 +16,7 @@ The user must manually install these packages before installing counterr as belo
 Notes:
 - For installing pysam, please refer to its [documentation](https://pysam.readthedocs.io/en/latest/installation.html). 
 - matplotlib, numpy, and pandas are prerequisites for seaborn. If you use pip, those packages will be automatically installed.
-- Note that if you use conda, you may want to create a new virtual environment in order to avoid package version collisions.
+- If you use conda, you may want to create a new virtual environment in order to avoid package version collisions.
 
 ## Installation
 ```
@@ -51,12 +49,12 @@ counterr -bam file.bam -genome assembly.fa -output_dir output -mapq_thres 20 -le
 
 ## Outputs
 ### Figures
-All generated figures are collected into a single PDF file "reports.pdf". The individual figures are saved under the "figures" sub-directory.
+All generated figures are collected into a single PDF file (default name is “reports.pdf”). The individual figures are saved under the "figures" sub-directory.
 - per_read_Q_mean_med_pass_vs_fail.png: Unit-normalized density histogram of per-read mean/median Phred-Q scores grouped by read filter status. 
 - per_read_Q_pass_fail_mean_vs_med.png: Unit-normalized density histogram of per-read mean/median Phred-Q scores grouped by the statistics.
 - per_read_Q_pass_fail_mean_vs_std.png: Scatter plot of per-read Phred-Q score mean vs. std grouped by read filter status.
 - per_read_in_or_out_align_mean_vs_std.png: Scatter plot of per-read Phred-Q score mean vs. std grouped by aligned vs. unaligned regions.
-- per_read_dist_len.png: Histograms of the original read length and the length of the aligned portion.
+- per_read_dist_len.png: Histograms of the original read length and the length of the aligned portion of the read.
 - per_read_dist_len_in_or_out_align.png: Unit-normalized density histogram of read length grouped by aligned vs. unaligned regions.
 - per_read_len_vs_len_aligned.png: Scatter plot of recorded read length vs. **alignment length** defined as the sum of matches, mis-matches, insertions, and deletions in the alignment. Any regions with non-ACGT letters in the assembly are skipped and not counted in either of the lengths.
 - per_read_len_vs_len_aligned_div_len.png: Scatter plot of recorded read length vs. alignment length divided by the former.
@@ -64,15 +62,15 @@ All generated figures are collected into a single PDF file "reports.pdf". The in
 - per_read_hist_errors.png: Histogram of per-read error rate grouped by error type.
 - phredQ.pdf: Histogram of Phred-Q scores over all reads.
 - phredQ_vs_error.pdf: (left) Computed Phred-Q score vs. error rates. (right) Computed Phred-Q score vs. empirical Phred-Q score. The former is what is recorded in the fastq files of the reads and the latter is based on the alignments.
-- asm_hist_len_hp.pdf: Histogram of homopolymer length grouped by DNA letters.
-- dist_len_hp.pdf: Histogram of observed homopolymer length grouped by truth lengths and DNA letters.
+- asm_hist_len_hp.pdf: Histogram of homopolymer length in the reference genome grouped by DNA base.
+- dist_len_hp.pdf: Histogram of observed homopolymer length grouped by the true length and DNA base.
 - dist_indel_**.pdf: Distribution of insertions and deletions and their rates (computed as the ratio of the number of insertions/deletions to the number of matches or mismatches).
 - sub_matrix_**.pdf: Substitution matrices including insertions and deletions.
 
 The suffixes for the last two figures take one of the following values: 
 - all: No region in the assembly is excluded when computing various statistics.
-- hp: Only homopolymer region in the assembly is considered when computing various statistics.
-- ex_hp: Exclude homopolymer region in the assembly when computing various statistics.
+- hp: Only homopolymer regions in the assembly are considered when computing various statistics.
+- ex_hp: Excludes homopolymer regions in the assembly when computing various statistics.
 
 ### Tables
 - context_ins.tsv: Context-dependent insertion table with each row corresponding to a particular k-mer context (e.g., ACTTCA). Ordered by error rate from top to bottom. If a k-mer is not observed, then it is excluded from the table.
@@ -80,60 +78,6 @@ The suffixes for the last two figures take one of the following values:
 
 ### Data
 Various computed statistics are saved in the "stats" subdirectory. These files are necessary for aggregating results from multiple runs (see "Miscellaneous" section). At the moment, there is no complete documentation for the files.
-
-
-## Program summary
-Given a set of input data, counterr progresses in a linear fashion, computing various statistics described in the previous section. Here is a summary overview of the program: 
-- Load all contigs and their corresponding PySam read objects and store them in Python list and dictionary, respectively. Group reads into "pass" and "fail" piles based on the read filter chosen by the user or following the default settings.
-- Compute *per-read* Phred quality score statistics.
-- "Reconstruct" the alignment corresponding to each "pass" read and the contig to which it aligns. This entails inserting "-" in appropriate places within read and reference strings in the aligned region according to the alignment CIGAR string. Here is an example of a reconstructed alignment:
-```
-Ref  : AGCT--GTCA--AAACCC
-Read : AGCATTG-CACCAAAGCC
-CIGAR: ===XIIMD==II===X==
-PhQ  : 333373303335333332
-```
-The reconstruction makes easier writing and debugging routines that count various context independent and dependent errors. By default, reads whose reverse complements are mapped to the assembly are reverse complemented during alignment reconstruction. This step is necessary since the reverse complement of a read is recorded in the bam file when the reverse complement maps to the assembly (and not the read in its original orientation). The user may disable this default setting by passing -use_recorded flag but this will result in incorrect error profile characterization.
-
-- Based on reconstructed alignments, count errors (i.e., match, mis-match, insertion, and deletion) in each read, skipping over non-ACGT letter regions in the assembly.
-- Compute *aggregate* Phred quality score statistics.
-- Compute the histogram of homopolymer length by the DNA letters based on the assembly.
-- "Scrub" the reconstructed alignments: 1) Split alignments at non-ACGT site and 2) add a "homopolymer string" to each reconstructed alignment. The homopolymer string is used to mark homopolymer regions. After scrubbing, the example above becomes
-```
-Ref  : AGCT--GTCA--AAACCC
-Read : AGCATTG-CACCAAAGCC
-CIGAR: ===XIIMD==II===X==
-PhQ  : 333373303335333332
-HP   : ------------SHE---
-```
-The beginning of a homopolymer region is denoted by "S", the end "E", and the in-between "H". Note that the length of a homopolymer region can be greater than or equal to the length of the homopolymer in the reference. The latter situation occurs with an insertion as in the following case:
-```
-Ref  : TCGAAA-ACG
-Read : TCTAAAAACG
-CIGAR: ==X===I===
-HP   : ---SHHHE--
-```
-- Compute true vs. observed homopolymer length distribution.
-- Compute context independent error statistics.
-- Compute context dependent error statistics.
-
-An interested user may consult /counterr/counterr.py for more detail.
-
-## Caveats
-**High quality assembly must be used.**
-
-In order for the computed statistics to be accurate estimates of the true error profiles, the reference assembly must have a high (e.g., >99.999%) accuracy. A high quality reference can be obtained from large public databases such as NCBI, and the reads used to characterize the error profiles can be obatined through resequencing experiments of the reference isolate. If such high quality reference is not available, then the user may build an assembly based on a high (>100x) depth sequencing data followed by several rounds of polishing (e.g., using high quality Illumina reads). If short reads only assembly is used, then the assembly may contain many contigs whose edges are substantially less accurate than the rest. For that reason, counterr has an optional argument (-len_trim_contig_edge) that allows the user to exclude from consideration regions close to contig edges when computing various statistics. The program also splits contigs where non-ACGT letters (e.g., "S", "H", "N") are present in the assembly.
-
-
-**Computational requirements**
-
-counterr is not yet highly optimized for speed or memory. In particular, the tool does not support the use of multiple threads. For large alignment/assembly inputs, the user may run the tool on a cluster with a sufficiently large RAM to avoid an out-of-memory error. As an example, on MacBook Pro 2015 (2.7 GHz Intel Core i5), counterr took approximately 21 minutes to process a 137 MB bam file and its maximum RAM footprint was 1.2 GB. The run time and memory footprint scale linearly with the input bam file size. If you do not have a large memory cluster available, down-sampling the bam file using either samtools ("view -s") or "-lim" option is recommended.
-
-
-## Miscellaneous
-### Aggregating results
-To aggregate results from various runs, please refer to the script "/misc/aggregator.py".
-
 
 ## Full usage
 ```
@@ -198,10 +142,63 @@ optional arguments:
                         to use a non-default name. (default: report.pdf)                        
 ```
 
+## Program Description
+Given input data, counterr progresses in a linear fashion, executing the following steps:
+- Load all contigs and their corresponding PySam read objects and store them in a Python list and dictionary, respectively. Group reads into "pass" and "fail" piles based on the read filter chosen by the user or following the default settings.
+- Compute *per-read* Phred quality score statistics.
+- Create an "alignment reconstruction” for each "pass" read and the contig to which it aligns. The alignment reconstruction is a lightweight string representation of the alignment. Creating the reconstruction entails inserting “-“’s in appropriate places within the read and reference strings according to the alignment CIGAR string. Here is an example of an alignment reconstruction:
+```
+Ref  : AGCT--GTCA--AAACCC
+Read : AGCATTG-CACCAAAGCC
+CIGAR: ===XIIMD==II===X==
+PhQ  : 333373303335333332
+```
+The reconstruction structure makes it easier to write and debug routines that count various context independent and dependent errors. By default, for reads that mapped in the reverse orientation to the reference, the read sequence recorded in the bam is reverse complemented in the alignment reconstruction. This step is necessary since for reads that map to the reverse strand of the reference, the bam file typically records the reverse complement of the read and not the read in its original orientation. The user may disable this default setting by passing -use_recorded flag but this will likely result in an incorrect error profile characterization.
+
+- Based on alignment reconstructions, count errors (i.e., match, mismatch, insertion, and deletion) in each read, skipping over non-ACGT letter regions in the reference.
+- Compute *aggregate* Phred quality score statistics.
+- Compute the histogram of homopolymer length grouped by DNA base in the reference.
+- "Scrub" the alignment reconstructions: 1) Split alignments at non-ACGT sites and 2) add a "homopolymer string" to each reconstructed alignment. The homopolymer string is used to mark homopolymer regions. After scrubbing, the example above becomes
+```
+Ref  : AGCT--GTCA--AAACCC
+Read : AGCATTG-CACCAAAGCC
+CIGAR: ===XIIMD==II===X==
+PhQ  : 333373303335333332
+HP   : ------------SHE---
+```
+The start of a homopolymer region is denoted by "S", the end "E", and the in-between homopolymer region "H". Note that the length of a homopolymer region can be greater than or equal to the length of the homopolymer in the reference. The latter situation occurs with an insertion in the read, for example:
+```
+Ref  : TCGAAA-ACG
+Read : TCTAAAAACG
+CIGAR: ==X===I===
+HP   : ---SHHHE--
+```
+- Compute true vs. observed homopolymer length distribution.
+- Compute context independent error statistics.
+- Compute context dependent error statistics.
+
+## Caveats
+**High quality reference must be used.**
+
+In order for the computed statistics to be accurate estimates of the true error profiles, the reference assembly must have a high (e.g., >99.999%) accuracy. If not such reference is readily available, users can create an assembly based on high (>100x) depth sequencing data followed by several rounds of polishing (e.g., using high quality Illumina reads). If a short-reads assembly is used as the reference, then the assembly may contain many contigs whose edges are substantially less accurate than the rest of the reference. For that reason, counterr has an optional argument (-len_trim_contig_edge) that allows the user to exclude from consideration regions close to contig edges when computing various statistics. The program also splits contigs where non-ACGT letters (e.g., "S", "H", "N") are present in the assembly.
+
+
+**Computational requirements**
+
+counterr is not yet highly optimized for speed or memory. In particular, the tool does not support the use of multiple threads. For large alignment/assembly inputs, the user may run the tool on a cluster with a sufficiently large RAM to avoid an out-of-memory error. As an example, on a MacBook Pro 2015 (2.7 GHz Intel Core i5), counterr took approximately 21 minutes to process a 137 MB bam file and its maximum RAM footprint was 1.2 GB. The run time and memory footprint scale linearly with the input bam file size. If you do not have a large memory cluster available, down-sampling the bam file using either samtools ("view -s") or "-lim" option is recommended.
+
+
+## Miscellaneous
+### Aggregating results
+To aggregate results from various runs, please refer to the script "/misc/aggregator.py".
+
+
 ## Known issues and work-arounds
 The following issues will be fixed in the near future. Until then, work-arounds are provided for some of them.
 
   The list is currently empty.
+## Contact Information
+Please use the GitHub issues page for the repository if you have questions. Inquiries about the tool can also be made to jae@dayzerodiagnostics.com.
 
 ## License
 GNU Public License, V3
