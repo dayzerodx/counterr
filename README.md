@@ -180,7 +180,7 @@ HP   : ---SHHHE--
 ## Caveats
 **High quality reference must be used.**
 
-In order for the computed statistics to be accurate estimates of the true error profiles, the reference assembly must have a high (e.g., >99.999%) accuracy. If not such reference is readily available, users can create an assembly based on high (>100x) depth sequencing data followed by several rounds of polishing (e.g., using high quality Illumina reads). If a short-reads assembly is used as the reference, then the assembly may contain many contigs whose edges are substantially less accurate than the rest of the reference. For that reason, counterr has an optional argument (-len_trim_contig_edge) that allows the user to exclude from consideration regions close to contig edges when computing various statistics. The program also splits contigs where non-ACGT letters (e.g., "S", "H", "N") are present in the assembly.
+In order for the computed statistics to be accurate estimates of the true error profiles, the reference assembly must have a high (e.g., >99.999%) accuracy. If such reference is not readily available, users can create an assembly based on high (>100x) depth sequencing data followed by several rounds of polishing (e.g., using high quality Illumina reads). If a short-reads assembly is used as the reference, then the assembly may contain many contigs whose edges are substantially less accurate than the rest of the reference. For that reason, counterr has an optional argument (-len_trim_contig_edge) that allows the user to exclude from consideration regions close to contig edges when computing various statistics. The program also splits contigs where non-ACGT letters (e.g., "S", "H", "N") are present in the assembly.
 
 
 **Computational requirements**
