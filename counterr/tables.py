@@ -2,19 +2,19 @@ from .util import *
 
 def context_sub_matrix_row2str(idx, context_sub_matrix , kmers, error_rates, N_obs):
     N_obs = float(N_obs)
-    return "\t".join([kmers[idx], "%2.2f" % (error_rates[idx] * 100), "%d" % N_obs, "%2.2f" % (context_sub_matrix[idx, 0]/N_obs * 100), "%2.2f" % (context_sub_matrix[idx, 1]/N_obs * 100), "%.2f" % (context_sub_matrix[idx, 2]/N_obs * 100), "%2.2f" % (context_sub_matrix[idx, 3]/N_obs * 100), "%2.2f" % (context_sub_matrix[idx, 4]/N_obs * 100)]) + "\n"    
+    return "\t".join([kmers[idx], "%2.4f" % (error_rates[idx] * 100), "%d" % N_obs, "%2.4f" % (context_sub_matrix[idx, 0]/N_obs * 100), "%2.4f" % (context_sub_matrix[idx, 1]/N_obs * 100), "%.2f" % (context_sub_matrix[idx, 2]/N_obs * 100), "%2.4f" % (context_sub_matrix[idx, 3]/N_obs * 100), "%2.4f" % (context_sub_matrix[idx, 4]/N_obs * 100)]) + "\n"    
 
 def context_ins_row2str(idx, idx_N1, kmers, error_rates, N_obs, context_hist_char_ins, context_hist_len_ins, len_max_ins):
     N_obs = float(N_obs)
     N_obs_char = float(np.sum(context_hist_char_ins[idx])) + 1e-6
     return "\t".join([kmers[idx], kmers[idx][idx_N1: idx_N1+2], 
-                    "%2.2f" % (error_rates[idx] * 100), 
+                    "%2.4f" % (error_rates[idx] * 100), 
                     "%d" % N_obs, 
-                    "%2.2f" % (context_hist_char_ins[idx, 0]/N_obs_char * 100) , 
-                    "%2.2f" % (context_hist_char_ins[idx, 1]/N_obs_char * 100) , 
-                    "%2.2f" % (context_hist_char_ins[idx, 2]/N_obs_char * 100) , 
-                    "%2.2f" % (context_hist_char_ins[idx, 3]/N_obs_char * 100) , 
-                    "\t".join(["%2.2f" % (context_hist_len_ins[idx, i]/N_obs * 100) for i in xrange(len_max_ins)])])+ "\n"
+                    "%2.4f" % (context_hist_char_ins[idx, 0]/N_obs_char * 100) , 
+                    "%2.4f" % (context_hist_char_ins[idx, 1]/N_obs_char * 100) , 
+                    "%2.4f" % (context_hist_char_ins[idx, 2]/N_obs_char * 100) , 
+                    "%2.4f" % (context_hist_char_ins[idx, 3]/N_obs_char * 100) , 
+                    "\t".join(["%2.4f" % (context_hist_len_ins[idx, i]/N_obs * 100) for i in xrange(len_max_ins)])])+ "\n"
 
 def tabulate_context_sub_matrix(context_sub_matrix, len_context_sub, output_dir, ex_hp=False, N_top_bottom=None, suffix=""):
     """
