@@ -1,24 +1,33 @@
 from .util import *
 ft_size = 15
 
-def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir, report=None, num_pts_max=50000):
+def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir, report=None, num_pts_max=50000, illumina=False):
     # -- Q mean/med distribution
     fig_name = os.path.join(output_dir, "per_read_Q_mean_med_pass_vs_fail.png")
-    bins = np.arange(-0.5, 30.5, 1.)
+    if illumina:
+        bins = np.arange(-0.5, 50, 1.)
+    else:
+        bins = np.arange(-0.5, 30.5, 1.)        
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12))
     # pass
     ax1.hist(means_pass, bins=bins, histtype="step", color="black", label="pass/mean", lw=1.5, normed=True)
     ax1.hist(meds_pass, bins=bins, histtype="step", color="red", label="pass/med", lw=1.5, normed=True)
     ax1.set_title("Pass reads", fontsize=ft_size)
     ax1.set_xlabel("Q-score stat", fontsize=ft_size)
-    ax1.set_xlim([0, 30])
+    if illumina:
+        ax1.set_xlim([0, 50])
+    else:
+        ax1.set_xlim([0, 30])        
     ax1.legend(loc="upper right", fontsize=ft_size)
     # fail
     ax2.hist(means_fail, bins=bins, histtype="step", color="black", label="fail/mean", lw=1.5, normed=True)
     ax2.hist(meds_fail, bins=bins, histtype="step", color="red", label="fail/med", lw=1.5, normed=True)
     ax2.set_title("Fail reads", fontsize=ft_size)
     ax2.set_xlabel("Q-score stat", fontsize=ft_size)    
-    ax2.set_xlim([0, 30])
+    if illumina:
+        ax2.set_xlim([0, 50])
+    else:
+        ax2.set_xlim([0, 30])
     ax2.legend(loc="upper right", fontsize=ft_size)
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
@@ -29,21 +38,30 @@ def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fai
 
     # -- Q mean/med distribution -- II
     fig_name = os.path.join(output_dir, "per_read_Q_pass_fail_mean_vs_med.png")
-    bins = np.arange(-0.5, 30.5, 1.)
+    if illumina:
+        bins = np.arange(-0.5, 50, 1.)
+    else:
+        bins = np.arange(-0.5, 30.5, 1.)
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12))
     # pass
     ax1.hist(means_pass, bins=bins, histtype="step", color="black", label="pass/mean", lw=1.5, normed=True)
     ax1.hist(means_fail, bins=bins, histtype="step", color="red", label="fail/mean", lw=1.5, normed=True)
     ax1.set_title("Mean", fontsize=ft_size)
     ax1.set_xlabel("Q-score stat", fontsize=ft_size)        
-    ax1.set_xlim([0, 30])
+    if illumina:
+        ax1.set_xlim([0, 50])
+    else:
+        ax1.set_xlim([0, 30])                
     ax1.legend(loc="upper right", fontsize=ft_size)
     # fail
     ax2.hist(meds_pass, bins=bins, histtype="step", color="black", label="pass/med", lw=1.5, normed=True)
     ax2.hist(meds_fail, bins=bins, histtype="step", color="red", label="fail/med", lw=1.5, normed=True)
     ax2.set_title("Med", fontsize=ft_size)
     ax2.set_xlabel("Q-score stat", fontsize=ft_size)    
-    ax2.set_xlim([0, 30])
+    if illumina:
+        ax2.set_xlim([0, 50])
+    else:
+        ax2.set_xlim([0, 30])     
     ax2.legend(loc="upper right", fontsize=ft_size)
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
@@ -68,8 +86,12 @@ def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fai
     #change the marker size manually
     lgnd.legendHandles[0]._sizes = [30]
     lgnd.legendHandles[1]._sizes = [30]    
-    ax.set_xlim([0, 30])
-    ax.set_ylim([0, 15])
+    if illumina:
+        ax.set_xlim([0, 50])
+        ax.set_ylim([0, 25])
+    else:
+        ax.set_xlim([0, 30])
+        ax.set_ylim([0, 15])
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
@@ -79,7 +101,7 @@ def plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fai
 
     return 
 
-def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir, report=None, num_pts_max=50000):
+def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir, report=None, num_pts_max=50000, illumina=False):
     # -- Q med vs std.
     means_out, stds_out = uniform_downsample([means_out, stds_out], num_pts_max)
     means_in, stds_in = uniform_downsample([means_in, stds_in], num_pts_max)    
@@ -96,8 +118,12 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
     #change the marker size manually
     lgnd.legendHandles[0]._sizes = [30]
     lgnd.legendHandles[1]._sizes = [30]    
-    ax.set_xlim([0, 30])
-    ax.set_ylim([0, 15])    
+    if illumina:
+        ax.set_xlim([0, 50])
+        ax.set_ylim([0, 25])
+    else:
+        ax.set_xlim([0, 30])
+        ax.set_ylim([0, 15])
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
