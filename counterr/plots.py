@@ -367,7 +367,7 @@ def plot_sub_heatmap(sub_matrix, output_dir, vmin=0., vmax=10., fname="sub_table
     return
 
 def plot_dist_len_hp(dist_len_hp, output_dir, len_min=3, len_max=11, report=None):
-    assert (len_max - len_min) == 8, "The range must be 10."
+    assert (len_max - len_min) == 8, "The range must be 8."
     # Lengths distributions
     plt.close()
     fig, ax_list = plt.subplots(4, 2, figsize=(17, 17))
@@ -377,11 +377,9 @@ def plot_dist_len_hp(dist_len_hp, output_dir, len_min=3, len_max=11, report=None
         idx_row = i % 4
         for ltr in bases_list: # For each letter homopolymer        
             counts = dist_len_hp[base2int[ltr], len_hp]
-            iselect = counts > 0
             count_total = counts.sum()
             counts_normed = counts / (count_total + 1e-6)
-            ax_list[idx_row, idx_col].plot(length[iselect], counts_normed[iselect], marker="o", \
-                    label="%s: %d" % (ltr, count_total), ls="--", lw=1)
+            ax_list[idx_row, idx_col].plot(length, counts_normed, marker="o", label="%s: %d" % (ltr, count_total), ls="--", lw=1)
         ax_list[idx_row, idx_col].axvline(x=len_hp, ls="--", c="black", lw=1, label="True length: %d" % len_hp)
         ax_list[idx_row, idx_col].legend(loc="upper right", fontsize=13)
         ax_list[idx_row, idx_col].set_xlim([0, 15])
