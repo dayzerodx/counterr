@@ -366,7 +366,7 @@ def get_hist_len_hp(contigs, len_min_hp, len_max_hp, len_trim_contig_edge, verbo
 
     return hist_len_hp
 
-def phredQ_vs_error(alns, max_Q=50, verbose=False):
+def phredQ_vs_error(alns, max_Q=100, verbose=False):
     """
     Given the reconstructed alignments, for each recorded Q value compute the various error rates. Note that deleted characters can't be associated with a phred score.
     """
