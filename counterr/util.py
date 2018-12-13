@@ -137,7 +137,16 @@ def uniform_downsample(a_list, num_pts_max):
 
     return return_list
 
-
+def change_ext_to_png(fig_name, only_png):
+    """
+    If only_png is true, then enforce .png as the extension.
+    """
+    if only_png:
+        fig_name_parts = fig_name.split(".")[:-1] # All elements except the extension
+        fig_name_parts.append(".png")
+        fig_name = "".join(fig_name_parts)
+        
+    return fig_name
 
 
 

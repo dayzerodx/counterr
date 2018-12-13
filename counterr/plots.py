@@ -263,7 +263,7 @@ def plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins
 
     return
 
-def plot_phredQ_stats(qs, nums_match, nums_sub, nums_ins, nums_err, nums_tot, output_dir, report=None):
+def plot_phredQ_stats(qs, nums_match, nums_sub, nums_ins, nums_err, nums_tot, output_dir, report=None, only_png=False):
     # Plot only that has at least one observation
     iselect = nums_tot > 0 
     qs = qs[iselect]
@@ -296,6 +296,7 @@ def plot_phredQ_stats(qs, nums_match, nums_sub, nums_ins, nums_err, nums_tot, ou
     ax2.set_ylim([0, q_max])
     ax2.set_xlim([0, q_max])
     fig_name = os.path.join(output_dir, "phredQ_vs_error.pdf")
+    fig_name = change_ext_to_png(fig_name, only_png)    
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
@@ -311,7 +312,7 @@ def plot_phredQ_stats(qs, nums_match, nums_sub, nums_ins, nums_err, nums_tot, ou
     ax.set_xlabel("Phred Q", fontsize=15)
     ax.set_ylabel("Counts", fontsize=15)
     ax.set_xlim([0, q_max])
-    fig_name = os.path.join(output_dir, "phredQ.pdf")
+    fig_name = change_ext_to_png(fig_name, only_png)
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
@@ -321,7 +322,7 @@ def plot_phredQ_stats(qs, nums_match, nums_sub, nums_ins, nums_err, nums_tot, ou
 
     return
 
-def plot_hist_len_hp_asm(len_hist_hp, output_dir, report=None):
+def plot_hist_len_hp_asm(len_hist_hp, output_dir, report=None, only_png=False):
     len_max = len_hist_hp.shape[1]
     plt.close()
     fig, ax = plt.subplots(1, 1, figsize=(7, 5))
@@ -334,6 +335,7 @@ def plot_hist_len_hp_asm(len_hist_hp, output_dir, report=None):
     ax.set_xticks(np.arange(len_max))
     ax.set_ylabel("Counts")
     fig_name = os.path.join(output_dir, "asm_hist_len_hp.pdf")
+    fig_name = change_ext_to_png(fig_name, only_png)
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
@@ -343,7 +345,7 @@ def plot_hist_len_hp_asm(len_hist_hp, output_dir, report=None):
 
     return
 
-def plot_sub_heatmap(sub_matrix, output_dir, vmin=0., vmax=10., fname="sub_table.pdf", report=None):
+def plot_sub_heatmap(sub_matrix, output_dir, vmin=0., vmax=10., fname="sub_table.pdf", report=None, only_png=False):
     """
     Note that units are in percentage.
     """
@@ -357,6 +359,7 @@ def plot_sub_heatmap(sub_matrix, output_dir, vmin=0., vmax=10., fname="sub_table
     ax.set_ylabel("Truth", fontsize=ft_size)
     ax.set_xlabel("Observed", fontsize=ft_size)
     fig_name = os.path.join(output_dir, fname)
+    fig_name = change_ext_to_png(fig_name, only_png)
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
@@ -366,7 +369,7 @@ def plot_sub_heatmap(sub_matrix, output_dir, vmin=0., vmax=10., fname="sub_table
 
     return
 
-def plot_dist_len_hp(dist_len_hp, output_dir, len_min=3, len_max=11, report=None):
+def plot_dist_len_hp(dist_len_hp, output_dir, len_min=3, len_max=11, report=None, only_png=False):
     assert (len_max - len_min) == 8, "The range must be 8."
     # Lengths distributions
     plt.close()
@@ -387,6 +390,7 @@ def plot_dist_len_hp(dist_len_hp, output_dir, len_min=3, len_max=11, report=None
         ax_list[idx_row, idx_col].set_xticks(range(15))
         ax_list[idx_row, idx_col].set_xlabel("Observed homopolymer length", fontsize=15)
     fig_name = os.path.join(output_dir, "dist_len_hp.pdf")
+    fig_name = change_ext_to_png(fig_name, only_png)    
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)
@@ -394,7 +398,7 @@ def plot_dist_len_hp(dist_len_hp, output_dir, len_min=3, len_max=11, report=None
 
     plt.close()
 
-def plot_dist_indel(R_ins, R_del, dist_len_del, dist_len_ins, output_dir, fname="dist_indel.pdf", report=None):
+def plot_dist_indel(R_ins, R_del, dist_len_del, dist_len_ins, output_dir, fname="dist_indel.pdf", report=None, only_png=False):
     plt.close()
     # Normalize to unit-norm
     dist_len_del = dist_len_del[:]/float(dist_len_del.sum())
@@ -413,6 +417,7 @@ def plot_dist_indel(R_ins, R_del, dist_len_del, dist_len_ins, output_dir, fname=
     ax.set_ylim([0, 1.0])
     ax.set_title("Ins/del: rate per match", fontsize=ft_size)
     fig_name = os.path.join(output_dir, fname)
+    fig_name = change_ext_to_png(fig_name, only_png)    
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
         plt.suptitle(fig_name.split("/")[-1].split(".")[0], fontsize=20)

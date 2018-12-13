@@ -28,7 +28,8 @@ def main():
     parser.add_argument("-use_recorded", help="pass this flag to NOT perform reverse complementing of the reverse complement mapped reads", action="store_true")
     parser.add_argument("-lim", help="pass this flag to run the program with 'lim' randomly selected reads (both pass and fail)", type=int, default=-1)
     parser.add_argument("-num_pts_max", help="maximum number of points to be plotted for any scatter plots", type=int, default=100000)
-    parser.add_argument("-report_name", help="the name of the output PDF report if the user wishes to use a non-default name.", type=str, default="report.pdf")
+    parser.add_argument("-report_name", help="the name of the output PDF report if the user wishes to use a non-default name", type=str, default="report.pdf")
+    parser.add_argument("-only_png", help="save all figures in png format", action="store_true")    
     args = parser.parse_args()
 
     # Create variables of the same name
@@ -51,6 +52,8 @@ def main():
     num_pts_max = args.num_pts_max
     bitflag = args.bitflag
     report_name = args.report_name
+    only_png = args.only_png
+
     if not args.no_figures:
         generate_figures = True
     else:
@@ -128,7 +131,7 @@ def main():
     qs, nums_match_q, nums_sub_q, nums_ins_q, nums_err_q, nums_tot_q = phredQ_vs_error(alns, verbose=verbose)
     save_phredQ_stats([qs, nums_match_q, nums_sub_q, nums_ins_q, nums_err_q, nums_tot_q], output_dir_stats)
     if generate_figures:
-        plot_phredQ_stats(qs, nums_match_q, nums_sub_q, nums_ins_q, nums_err_q, nums_tot_q, output_dir_figures, report=report)
+        plot_phredQ_stats(qs, nums_match_q, nums_sub_q, nums_ins_q, nums_err_q, nums_tot_q, output_dir_figures, report=report, only_png=only_png)
     del qs, nums_match_q, nums_sub_q, nums_ins_q, nums_err_q, nums_tot_q
 
 
@@ -136,7 +139,7 @@ def main():
     hist_len_hp_asm = get_hist_len_hp(contigs, len_min_hp, len_max_hp, len_trim_contig_edge, verbose=verbose)
     save_hist_len_hp_asm(hist_len_hp_asm, len_max_hp, output_dir_stats)
     if generate_figures:
-        plot_hist_len_hp_asm(hist_len_hp_asm, output_dir_figures, report=report)
+        plot_hist_len_hp_asm(hist_len_hp_asm, output_dir_figures, report=report, only_png=only_png)
     del hist_len_hp_asm
 
     # ---- Scrub the reconstructed alignments
@@ -148,7 +151,7 @@ def main():
     hist_len_hp = count_errors_hp(alns_scrubbed, len_min_hp, len_max_hp, verbose=verbose)
     save_len_hp(hist_len_hp, output_dir_stats)
     if generate_figures:
-        plot_dist_len_hp(hist_len_hp, output_dir_figures, report=report)
+        plot_dist_len_hp(hist_len_hp, output_dir_figures, report=report, only_png=only_png)
     del hist_len_hp
 
 
@@ -175,8 +178,8 @@ def main():
             (sub_matrix, R_ins, R_del, hist_len_del, hist_len_ins, "_ex_hp"),
             (sub_matrix_all, R_ins_all, R_del_all, hist_len_del_all, hist_len_ins_all, "_all"),
             (sub_matrix_hp, R_ins_hp, R_del_hp, hist_len_del_hp, hist_len_ins_hp, "_hp")]:
-            plot_sub_heatmap(sub, output_dir_figures, vmin=0., vmax=8, fname="sub_matrix%s.png" % suffix, report=report)
-            plot_dist_indel(R_i, R_d, hist_del, hist_ins, output_dir_figures, fname="dist_indel%s.png" %suffix, report=report)
+            plot_sub_heatmap(sub, output_dir_figures, vmin=0., vmax=8, fname="sub_matrix%s.png" % suffix, report=report, only_png=only_png)
+            plot_dist_indel(R_i, R_d, hist_del, hist_ins, output_dir_figures, fname="dist_indel%s.png" %suffix, report=report, only_png=only_png)
 
     # ---- Context dependent errors
     context_sub_matrix = context_sub_table(alns_scrubbed, len_context_sub=len_context_sub, verbose=verbose)
