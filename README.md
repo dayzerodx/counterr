@@ -3,6 +3,19 @@ Counterr is a light-weight command line tool that computes errors in sequencing 
 
 The tool was developed with Oxford Nanopore Technology reads in mind but is general and applicable to other sequencing platforms such as Illumina and PacBio.
 
+## Table of Contents
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Quick Examples](#quick-examples)
+4. [Full Usage](#full-usage)
+5. [Outputs](#outputs)
+6. [Program Description](#program-description)
+7. [Caveats](#caveats)
+8. [Miscellaneous](#miscellaneous)
+9. [Known Issues and Work-arounds](#known-issues-and-work-arounds)
+10. [Contact Information](#contact-information)
+11. [License](#license)
+
 ## Requirements
 - Python 2.7/Python 3.4 or later
 - pysam>=0.14.1
@@ -33,7 +46,7 @@ rm -r dist/ build/ counterr.egg-info/
 python setup.py install
 ```
 
-## Quick examples
+## Quick Examples
 **Basic use case with terminal outputs**
 ```
 counterr -bam file.bam -genome assembly.fa -output_dir output -verbose
@@ -79,7 +92,7 @@ The suffixes for the last two figures take one of the following values:
 ### Data
 Various computed statistics are saved in the "stats" subdirectory. These files are necessary for aggregating results from multiple runs (see "Miscellaneous" section). At the moment, there is no complete documentation for the files.
 
-## Full usage
+## Full Usage
 ```
 usage: counterr [-h] -bam BAM -genome GENOME -output_dir OUTPUT_DIR
                  [-no_figures] [-bai BAI] [-verbose]
@@ -193,7 +206,7 @@ counterr is not yet highly optimized for speed or memory. In particular, the too
 To aggregate results from various runs, please refer to the script "/misc/aggregator.py".
 
 
-## Known issues and work-arounds
+## Known Issues and Work-arounds
 The following issues will be fixed in the near future. Until then, work-arounds are provided for some of them.
 
   The list is currently empty.
