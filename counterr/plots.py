@@ -312,6 +312,7 @@ def plot_phredQ_stats(qs, nums_match, nums_sub, nums_ins, nums_err, nums_tot, ou
     ax.set_xlabel("Phred Q", fontsize=15)
     ax.set_ylabel("Counts", fontsize=15)
     ax.set_xlim([0, q_max])
+    fig_name = os.path.join(output_dir, "phredQ.pdf")    
     fig_name = change_ext_to_png(fig_name, only_png)
     plt.savefig(fig_name, dpi=200, bbox_inches="tight")
     if report is not None:
