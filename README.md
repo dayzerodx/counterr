@@ -130,20 +130,20 @@ Example outputs are available in "example_outdir" directory.
 All generated figures are collected into a single PDF file (default name is “reports.pdf”). The individual figures are saved under the "figures" sub-directory.
 - per_read_Q_mean_med_pass_vs_fail.png: Unit-normalized density histogram of per-read mean/median Phred-Q scores grouped by read filter status. ![per_read_Q_mean_med_pass_vs_fail](/example_outdir/figures/per_read_Q_mean_med_pass_vs_fail.png)
 - per_read_Q_pass_fail_mean_vs_med.png: Unit-normalized density histogram of per-read mean/median Phred-Q scores grouped by the statistics. ![](/example_outdir/figures/per_read_Q_pass_fail_mean_vs_med.png)
-- per_read_Q_pass_fail_mean_vs_std.png: Scatter plot of per-read Phred-Q score mean vs. std grouped by read filter status.
-- per_read_in_or_out_align_mean_vs_std.png: Scatter plot of per-read Phred-Q score mean vs. std grouped by aligned vs. unaligned regions.
-- per_read_dist_len.png: Histograms of the original read length and the length of the aligned portion of the read.
-- per_read_dist_len_in_or_out_align.png: Unit-normalized density histogram of read length grouped by aligned vs. unaligned regions.
-- per_read_len_vs_len_aligned.png: Scatter plot of recorded read length vs. **alignment length** defined as the sum of matches, mis-matches, insertions, and deletions in the alignment. Any regions with non-ACGT letters in the assembly are skipped and not counted in either of the lengths.
-- per_read_len_vs_len_aligned_div_len.png: Scatter plot of recorded read length vs. alignment length divided by the former.
-- per_read_len_vs_error_div_len_aligned.png: Scatter plot of original read length vs. per-read error rates grouped by error type.
-- per_read_hist_errors.png: Histogram of per-read error rate grouped by error type.
-- phredQ.pdf: Histogram of Phred-Q scores over all reads.
-- phredQ_vs_error.pdf: (left) Computed Phred-Q score vs. error rates. (right) Computed Phred-Q score vs. empirical Phred-Q score. The former is what is recorded in the fastq files of the reads and the latter is based on the alignments.
-- asm_hist_len_hp.pdf: Histogram of homopolymer length in the reference genome grouped by DNA base.
-- dist_len_hp.pdf: Histogram of observed homopolymer length grouped by the true length and DNA base.
-- dist_indel_**.pdf: Distribution of insertions and deletions and their rates (computed as the ratio of the number of insertions/deletions to the number of matches or mismatches).
-- sub_matrix_**.pdf: Substitution matrices including insertions and deletions.
+- per_read_Q_pass_fail_mean_vs_std.png: Scatter plot of per-read Phred-Q score mean vs. std grouped by read filter status. ![](/example_outdir/figures/per_read_Q_pass_fail_mean_vs_std.png)
+- per_read_in_or_out_align_mean_vs_std.png: Scatter plot of per-read Phred-Q score mean vs. std grouped by aligned vs. unaligned regions. ![](/example_outdir/figures/per_read_in_or_out_align_mean_vs_std.png)
+- per_read_dist_len.png: Histograms of the original read length and the length of the aligned portion of the read. ![](/example_outdir/figures/per_read_dist_len.png)
+- per_read_dist_len_in_or_out_align.png: Unit-normalized density histogram of read length grouped by aligned vs. unaligned regions. ![](/example_outdir/figures/per_read_dist_len_in_or_out_align.png)
+- per_read_len_vs_len_aligned.png: Scatter plot of recorded read length vs. **alignment length** defined as the sum of matches, mis-matches, insertions, and deletions in the alignment. Any regions with non-ACGT letters in the assembly are skipped and not counted in either of the lengths. ![](/example_outdir/figures/per_read_len_vs_len_aligned.png)
+- per_read_len_vs_len_aligned_div_len.png: Scatter plot of recorded read length vs. alignment length divided by the former. ![](/example_outdir/figures/per_read_len_vs_len_aligned_div_len.png)
+- per_read_len_vs_error_div_len_aligned.png: Scatter plot of original read length vs. per-read error rates grouped by error type. ![](/example_outdir/figures/per_read_len_vs_error_div_len_aligned.png)
+- per_read_hist_errors.png: Histogram of per-read error rate grouped by error type. ![](/example_outdir/figures/per_read_hist_errors.png)
+- phredQ.pdf: Histogram of Phred-Q scores over all reads. ![](/example_outdir/figures/phredQ.pdf)
+- phredQ_vs_error.pdf: (left) Computed Phred-Q score vs. error rates. (right) Computed Phred-Q score vs. empirical Phred-Q score. The former is what is recorded in the fastq files of the reads and the latter is based on the alignments. ![](/example_outdir/figures/phredQ_vs_error.pdf)
+- asm_hist_len_hp.pdf: Histogram of homopolymer length in the reference genome grouped by DNA base. ![](/example_outdir/figures/asm_hist_len_hp.pdf)
+- dist_len_hp.pdf: Histogram of observed homopolymer length grouped by the true length and DNA base. ![](/example_outdir/figures/dist_len_hp.pdf)
+- dist_indel_**.pdf: Distribution of insertions and deletions and their rates (computed as the ratio of the number of insertions/deletions to the number of matches or mismatches). ![dist_indel_all.pdf](/example_outdir/figures/dist_indel_all.pdf)
+- sub_matrix_**.pdf: Substitution matrices including insertions and deletions. ![sub_matrix_all.pdf](/example_outdir/figures/sub_matrix_all.pdf)
 
 The suffixes for the last two figures take one of the following values: 
 - all: No region in the assembly is excluded when computing various statistics.
