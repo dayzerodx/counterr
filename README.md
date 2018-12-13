@@ -63,15 +63,16 @@ counterr -bam file.bam -genome assembly.fa -output_dir output -mapq_thres 20 -le
 ## Full Usage
 ```
 usage: counterr [-h] -bam BAM -genome GENOME -output_dir OUTPUT_DIR
-                 [-no_figures] [-bai BAI] [-verbose]
-                 [-len_min_contig LEN_MIN_CONTIG] [-mapq_thres MAPQ_THRES]
-                 [-len_min_read LEN_MIN_READ] [-len_min_aln LEN_MIN_ALN]
-                 [-bitflag BITFLAG] [-len_min_hp LEN_MIN_HP]
-                 [-len_max_hp LEN_MAX_HP] [-len_context_sub LEN_CONTEXT_SUB]
-                 [-len_context_ins LEN_CONTEXT_INS]
-                 [-len_max_indel LEN_MAX_INDEL]
-                 [-len_trim_contig_edge LEN_TRIM_CONTIG_EDGE] [-use_recorded]
-                 [-lim LIM]
+                [-no_figures] [-bai BAI] [-verbose]
+                [-len_min_contig LEN_MIN_CONTIG] [-mapq_thres MAPQ_THRES]
+                [-len_min_read LEN_MIN_READ] [-len_min_aln LEN_MIN_ALN]
+                [-bitflag BITFLAG] [-len_min_hp LEN_MIN_HP]
+                [-len_max_hp LEN_MAX_HP] [-len_context_sub LEN_CONTEXT_SUB]
+                [-len_context_ins LEN_CONTEXT_INS]
+                [-len_max_indel LEN_MAX_INDEL]
+                [-len_trim_contig_edge LEN_TRIM_CONTIG_EDGE] [-use_recorded]
+                [-lim LIM] [-num_pts_max NUM_PTS_MAX]
+                [-report_name REPORT_NAME] [-only_png]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -117,10 +118,11 @@ optional arguments:
                         selected reads (both pass and fail) (default: -1)
   -num_pts_max NUM_PTS_MAX
                         maximum number of points to be plotted for any scatter
-                        plots (default: 50000)
+                        plots (default: 100000)
   -report_name REPORT_NAME
                         the name of the output PDF report if the user wishes
-                        to use a non-default name. (default: report.pdf)                        
+                        to use a non-default name (default: report.pdf)
+  -only_png             save all figures in png format (default: False)
 ```
 
 ## Outputs
@@ -138,12 +140,12 @@ All generated figures are collected into a single PDF file (default name is “r
 - per_read_len_vs_len_aligned_div_len.png: Scatter plot of recorded read length vs. alignment length divided by the former. ![](/example_outdir/figures/per_read_len_vs_len_aligned_div_len.png)
 - per_read_len_vs_error_div_len_aligned.png: Scatter plot of original read length vs. per-read error rates grouped by error type. ![](/example_outdir/figures/per_read_len_vs_error_div_len_aligned.png)
 - per_read_hist_errors.png: Histogram of per-read error rate grouped by error type. ![](/example_outdir/figures/per_read_hist_errors.png)
-- phredQ.pdf: Histogram of Phred-Q scores over all reads. ![](/example_outdir/figures/phredQ.pdf)
-- phredQ_vs_error.pdf: (left) Computed Phred-Q score vs. error rates. (right) Computed Phred-Q score vs. empirical Phred-Q score. The former is what is recorded in the fastq files of the reads and the latter is based on the alignments. ![](/example_outdir/figures/phredQ_vs_error.pdf)
-- asm_hist_len_hp.pdf: Histogram of homopolymer length in the reference genome grouped by DNA base. ![](/example_outdir/figures/asm_hist_len_hp.pdf)
-- dist_len_hp.pdf: Histogram of observed homopolymer length grouped by the true length and DNA base. ![](/example_outdir/figures/dist_len_hp.pdf)
-- dist_indel_**.pdf: Distribution of insertions and deletions and their rates (computed as the ratio of the number of insertions/deletions to the number of matches or mismatches). ![dist_indel_all.pdf](/example_outdir/figures/dist_indel_all.pdf)
-- sub_matrix_**.pdf: Substitution matrices including insertions and deletions. ![sub_matrix_all.pdf](/example_outdir/figures/sub_matrix_all.pdf)
+- phredQ.pdf: Histogram of Phred-Q scores over all reads. ![](/example_outdir/figures/phredQ.png)
+- phredQ_vs_error.pdf: (left) Computed Phred-Q score vs. error rates. (right) Computed Phred-Q score vs. empirical Phred-Q score. The former is what is recorded in the fastq files of the reads and the latter is based on the alignments. ![](/example_outdir/figures/phredQ_vs_error.png)
+- asm_hist_len_hp.pdf: Histogram of homopolymer length in the reference genome grouped by DNA base. ![](/example_outdir/figures/asm_hist_len_hp.png)
+- dist_len_hp.pdf: Histogram of observed homopolymer length grouped by the true length and DNA base. ![](/example_outdir/figures/dist_len_hp.png)
+- dist_indel_**.pdf: Distribution of insertions and deletions and their rates (computed as the ratio of the number of insertions/deletions to the number of matches or mismatches). ![dist_indel_all.pdf](/example_outdir/figures/dist_indel_all.png)
+- sub_matrix_**.pdf: Substitution matrices including insertions and deletions. ![sub_matrix_all.pdf](/example_outdir/figures/sub_matrix_all.png)
 
 The suffixes for the last two figures take one of the following values: 
 - all: No region in the assembly is excluded when computing various statistics.
@@ -151,8 +153,8 @@ The suffixes for the last two figures take one of the following values:
 - ex_hp: Excludes homopolymer regions in the assembly when computing various statistics.
 
 ### Tables
-- context_ins.tsv: Context-dependent insertion table with each row corresponding to a particular k-mer context (e.g., ACTTCA). Ordered by error rate from top to bottom. If a k-mer is not observed, then it is excluded from the table.
-- context_sub.tsv: Context-dependent substitution table with each row corresponding to a particular k-mer context (e.g., ACGCA). Ordered by error rate from top to bottom. If a k-mer is not observed, then it is excluded from the table.
+- context_ins.tsv: Context-dependent insertion table with each row corresponding to a particular k-mer context (e.g., ACTTCA). Ordered by error rate from top to bottom. Error rate is defined as the percent of time insertion occurs in between the two central bases. If a k-mer is not observed, then it is excluded from the table.
+- context_sub.tsv: Context-dependent substitution table with each row corresponding to a particular k-mer context (e.g., ACGCA). Ordered by error rate from top to bottom. Error rate is defined as the percent of time the central base of the k-mer is incorrectly called. If a k-mer is not observed, then it is excluded from the table.
 
 ### Data
 Various computed statistics are saved in the "stats" subdirectory. These files are necessary for aggregating results from multiple runs (see "Miscellaneous" section). At the moment, there is no complete documentation for the files.
