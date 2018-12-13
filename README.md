@@ -128,7 +128,7 @@ Example outputs are available in "example_outdir" directory.
 
 ### Figures
 All generated figures are collected into a single PDF file (default name is “reports.pdf”). The individual figures are saved under the "figures" sub-directory.
-- per_read_Q_mean_med_pass_vs_fail.png: Unit-normalized density histogram of per-read mean/median Phred-Q scores grouped by read filter status. 
+- per_read_Q_mean_med_pass_vs_fail.png: Unit-normalized density histogram of per-read mean/median Phred-Q scores grouped by read filter status. ![per_read_Q_mean_med_pass_vs_fail](/example_outdir/figures/per_read_Q_mean_med_pass_vs_fail.png)
 - per_read_Q_pass_fail_mean_vs_med.png: Unit-normalized density histogram of per-read mean/median Phred-Q scores grouped by the statistics.
 - per_read_Q_pass_fail_mean_vs_std.png: Scatter plot of per-read Phred-Q score mean vs. std grouped by read filter status.
 - per_read_in_or_out_align_mean_vs_std.png: Scatter plot of per-read Phred-Q score mean vs. std grouped by aligned vs. unaligned regions.
