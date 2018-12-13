@@ -124,6 +124,8 @@ optional arguments:
 ```
 
 ## Outputs
+Example outputs are available in "example_outdir" directory. 
+
 ### Figures
 All generated figures are collected into a single PDF file (default name is “reports.pdf”). The individual figures are saved under the "figures" sub-directory.
 - per_read_Q_mean_med_pass_vs_fail.png: Unit-normalized density histogram of per-read mean/median Phred-Q scores grouped by read filter status. 
