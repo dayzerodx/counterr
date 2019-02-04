@@ -157,28 +157,27 @@ The suffixes for the last two figures take one of the following values:
 - context_sub.tsv: Context-dependent substitution table with each row corresponding to a particular k-mer context (e.g., ACGCA). Ordered by error rate from top to bottom. Error rate is defined as the percent of time the central base of the k-mer is incorrectly called. If a k-mer is not observed, then it is excluded from the table.
 
 ### Data
-Various computed statistics are saved in the "stats" subdirectory. These files are necessary for aggregating results from multiple runs (see "Miscellaneous" section).
-
+Various computed statistics are saved in the "stats" subdirectory. These files are necessary for aggregating results from multiple runs (see "Miscellaneous" section). A concise documentation is given below:
 - context_dependent_errors.npz
-  - sub_matrix: Each row corresponds to a k-mer and the five columns to "A", "C", "G", "T", and "-".
-  - hist_char_ins: Each row corresponds to a k-mer and the four columns to "A", "C", "G", and "T".
-  - hist_len_ins: Each row corresponds to a k-mer and columns to different insertion lengths starting from zero.
+  - sub_matrix: Context dependent subsitution matrix. Each row corresponds to a k-mer and the five columns to "A", "C", "G", "T", and "-".
+  - hist_char_ins: Context dependent insertion character distribution. Each row corresponds to a k-mer and the four columns to "A", "C", "G", and "T".
+  - hist_len_ins: Context dependent insertion length distribution. Each row corresponds to a k-mer and columns to different insertion lengths starting from zero.
 - context_independent_errors_**.npz
-  - R_ins/del: Rate of insertion and deletion occurences
-  - sub_matrix: Rows and columns correspond to "A", "C", "G", "T", and "-".
-  - hist_len_ins/del: Histogram of length of insertion and deletion.
-- hist_len_hp.npy:
+  - R_ins/del: Context independent rate of insertion and deletion occurences.
+  - sub_matrix: Context independent substitution matrix. Rows and columns correspond to "A", "C", "G", "T", and "-".
+  - hist_len_ins/del: Context independent histogram of insertion and deletion lengths.
+- hist_len_hp.npy: Histogram of true vs. observed lengths grouped by bases.
   - 0th axis: "A", "C", "G", "T"
   - 1st axis: True length
   - 2nd axis: Observed length
-- hist_len_hp_asm.npy:
+- hist_len_hp_asm.npy: Histogram of homopolymer lengths observed in the input reference grouped by bases.
   - Each row entry corresopnds to a specific homopolymer length.
   - Columns are "length", "A", "C", "G", and "T".
-- phredQ_stats.npy: 
+- phredQ_stats.npy: Phred-Q score vs. counts of various errors. 
   - Each row entry corresponds to a specific Q-score 'q'.
   - num_match: Number of matches for the q-score in the same row.
   - num_sub/ins/err/tot: The same as num_match except substitutions, insertions, any errors, and total numbers are counted.
-- per_read_stats_pass/fail.npy:
+- per_read_stats_pass/fail.npy: Read-level statistics.
   - Each row entry corresponds to a read (that passed or failed read filters).
   - mean, med, std: Mean, median, and standard deviation of Q-scores over the entire read. 
   - mean_in, med_in, std_in: Statistics computed only for aligned regions.
