@@ -12,7 +12,7 @@ def main():
     parser.add_argument("-output_dir", required=True, help="the output directory for figures and stats")
     # --- Optional arguments
     parser.add_argument("-no_figures", help="pass this flag to not generate figures", action="store_true")
-    parser.add_argument("-bai", help="the input bai filename if non-conventionally named", type=str, default="")
+    parser.add_argument("-bai", help="the input bai filename if non-conventionally named", type=str, default=None)
     parser.add_argument("-verbose", help="pass this flag to follow progress in the terminal", action="store_true")
     parser.add_argument("-len_min_contig", help="minimum contig length", type=int, default=1500)    
     parser.add_argument("-mapq_thres", help="minimum mapq threshold", type=int, default=40)
@@ -62,10 +62,9 @@ def main():
         correct_orientation = False
     else:
         correct_orientation = True
-    if bai == "": # If the user did not pass a specific .bai filename
-        bai = "".join([bam, ".bai"])
-        if not os.path.exists(bai):
-            assert False, "The index file (.bai) was not found."
+
+    assert bai is None or os.path.exists(bai), "The index file (.bai) was not found."
+
     # Check to make sure output_dir exists. If not, make one
     if not os.path.exists(output_dir):
         print("The output directory does not exist. Creating one.")
