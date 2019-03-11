@@ -1,6 +1,6 @@
 from .util import *
 
-def load_files(asm, bam, bai, len_min_contig, read_filter, lim, verbose):
+def load_files(asm, bam, bai, len_min_contig, read_filter, lim, verbose, cram=False):
     """
     Load the assembly contigs and their corresopnding reads, applying variosu filters.
 
@@ -25,7 +25,10 @@ def load_files(asm, bam, bai, len_min_contig, read_filter, lim, verbose):
     fasta.close()
 
     # ---- Load the alignment file, save only those that mapped to the contigs saved above. 
-    alignment = pysam.AlignmentFile(bam, index_filename = bai, mode ="rb")
+    if cram:
+        alignment = pysam.AlignmentFile(bam, index_filename = bai, mode ="rc")
+    else:
+        alignment = pysam.AlignmentFile(bam, index_filename = bai, mode ="rb")
     reads_pass = {} 
     reads_fail = {} 
 

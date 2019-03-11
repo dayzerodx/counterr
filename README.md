@@ -63,7 +63,7 @@ counterr -bam file.bam -genome assembly.fa -output_dir output -mapq_thres 20 -le
 ## Full Usage
 ```
 usage: counterr [-h] -bam BAM -genome GENOME -output_dir OUTPUT_DIR
-                [-no_figures] [-bai BAI] [-verbose]
+                [-no_figures] [-bai BAI] [-cram] [-verbose]
                 [-len_min_contig LEN_MIN_CONTIG] [-mapq_thres MAPQ_THRES]
                 [-len_min_read LEN_MIN_READ] [-len_min_aln LEN_MIN_ALN]
                 [-bitflag BITFLAG] [-len_min_hp LEN_MIN_HP]
@@ -84,7 +84,9 @@ optional arguments:
   -no_figures           pass this flag to not generate figures (default:
                         False)
   -bai BAI              the input bai filename if non-conventionally named
-                        (default: )
+                        (default: None)
+  -cram                 treat bam and bai inputs as cram and crai (default:
+                        False)
   -verbose              pass this flag to follow progress in the terminal
                         (default: False)
   -len_min_contig LEN_MIN_CONTIG

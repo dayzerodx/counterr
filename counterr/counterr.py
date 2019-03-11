@@ -13,6 +13,7 @@ def main():
     # --- Optional arguments
     parser.add_argument("-no_figures", help="pass this flag to not generate figures", action="store_true")
     parser.add_argument("-bai", help="the input bai filename if non-conventionally named", type=str, default=None)
+    parser.add_argument("-cram", help="treat bam and bai inputs as cram and crai", action="store_true")
     parser.add_argument("-verbose", help="pass this flag to follow progress in the terminal", action="store_true")
     parser.add_argument("-len_min_contig", help="minimum contig length", type=int, default=1500)    
     parser.add_argument("-mapq_thres", help="minimum mapq threshold", type=int, default=40)
@@ -53,6 +54,7 @@ def main():
     bitflag = args.bitflag
     report_name = args.report_name
     only_png = args.only_png
+    cram = args.cram
 
     if not args.no_figures:
         generate_figures = True
@@ -93,7 +95,7 @@ def main():
 
 
     # --- Load the data
-    contigs, reads_pass, reads_fail = load_files(asm, bam, bai, len_min_contig, read_filter, lim, verbose)
+    contigs, reads_pass, reads_fail = load_files(asm, bam, bai, len_min_contig, read_filter, lim, verbose, cram)
 
 
     # ---- Compute Q-score related statistics.
