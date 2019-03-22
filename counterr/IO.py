@@ -62,6 +62,8 @@ def load_files(asm, bam, bai, len_min_contig, read_filter, lim, verbose, cram=Fa
             idx = names.index(name)
             num_pick = nums_pick[idx]
             num_tot = nums_mapped[idx]
+            if (num_tot == 0) or (num_pick == 0):
+                continue
             assert num_pick <= num_tot
             reads_pass[name] = []
             reads_fail[name] = []
