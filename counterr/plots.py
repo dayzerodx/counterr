@@ -117,7 +117,7 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
     lgnd = plt.legend(loc="upper right", fontsize=ft_size, numpoints=1)
     #change the marker size manually
     lgnd.legendHandles[0]._sizes = [30]
-    lgnd.legendHandles[1]._sizes = [30]    
+    lgnd.legendHandles[1]._sizes = [30]
     if illumina:
         ax.set_xlim([0, 50])
         ax.set_ylim([0, 25])
@@ -157,7 +157,7 @@ def plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_ou
 
 def plot_per_read_error_stats(lens, lens_aligned, nums_match, nums_sub, nums_ins, nums_del, output_dir, report=None, num_pts_max=50000):
     len_max_lim = np.percentile(lens, 99.9) * 1.1
-    w = (np.percentile(lens, 90) - np.percentile(lens, 10))/50.
+    w = max((np.percentile(lens, 90) - np.percentile(lens, 10))/50., 1.)
     lens = lens.astype(float) + 1e-6
     lens_aligned = lens_aligned.astype(float) + 1e-6
 
