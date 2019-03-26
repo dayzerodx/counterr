@@ -72,7 +72,7 @@ usage: counterr [-h] -bam BAM -genome GENOME -output_dir OUTPUT_DIR
                 [-len_max_indel LEN_MAX_INDEL]
                 [-len_trim_contig_edge LEN_TRIM_CONTIG_EDGE] [-use_recorded]
                 [-lim LIM] [-num_pts_max NUM_PTS_MAX]
-                [-report_name REPORT_NAME] [-only_png]
+                [-report_name REPORT_NAME] [-only_png] [-illumina]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -125,6 +125,8 @@ optional arguments:
                         the name of the output PDF report if the user wishes
                         to use a non-default name (default: report.pdf)
   -only_png             save all figures in png format (default: False)
+  -illumina             use this option to make figures look nicer with
+                        Illumina data (default: False)
 ```
 
 ## Outputs

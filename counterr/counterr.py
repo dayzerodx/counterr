@@ -30,7 +30,8 @@ def main():
     parser.add_argument("-lim", help="pass this flag to run the program with 'lim' randomly selected reads (both pass and fail)", type=int, default=-1)
     parser.add_argument("-num_pts_max", help="maximum number of points to be plotted for any scatter plots", type=int, default=100000)
     parser.add_argument("-report_name", help="the name of the output PDF report if the user wishes to use a non-default name", type=str, default="report.pdf")
-    parser.add_argument("-only_png", help="save all figures in png format", action="store_true")    
+    parser.add_argument("-only_png", help="save all figures in png format", action="store_true")
+    parser.add_argument("-illumina", help="use this option to make figures look nicer with Illumina data", action="store_true")
     args = parser.parse_args()
 
     # Create variables of the same name
@@ -55,6 +56,7 @@ def main():
     report_name = args.report_name
     only_png = args.only_png
     cram = args.cram
+    illumina = args.illumina
 
     if not args.no_figures:
         generate_figures = True
@@ -103,12 +105,12 @@ def main():
     means_pass, meds_pass, stds_pass = mapQ_stats_per_read(reads_pass, verbose=verbose, comment="for pass reads")
     means_fail, meds_fail, stds_fail = mapQ_stats_per_read(reads_fail, verbose=verbose, comment="for fail reads")
     if generate_figures:
-        plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir_figures, report=report, num_pts_max=num_pts_max)
+        plot_per_read_Q_stats(means_pass, meds_pass, stds_pass, means_fail, meds_fail, stds_fail, output_dir_figures, report=report, num_pts_max=num_pts_max, illumina=illumina)
 
     # Mean/std Q-score per read by aligned/unaligned region
     means_in, stds_in, lens_in, means_out, stds_out, lens_out = mapQ_stats_aligned_readsegment(reads_pass, verbose=verbose)
     if generate_figures:
-        plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir_figures, report=report, num_pts_max=num_pts_max)
+        plot_per_read_Q_stats_aligned(means_in, stds_in, lens_in, means_out, stds_out, lens_out, output_dir_figures, report=report, num_pts_max=num_pts_max, illumina=illumina)
 
 
     # ---- Reconstruct all alignments that pass the read_filter defined above
