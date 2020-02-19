@@ -1,16 +1,20 @@
 from .util import *
 
+
 def make_read_filter(mapq_threshold, len_min_read, len_min_aln, bitflag):
     """
-    Returns a read_filter to filter out the reads that do not meet the defined standards.
+    Returns a read_filter to filter out the reads that do not meet the
+    defined standards.
 
     Parameters
     ----------
     - mapq_threshold: Minimum mapQ threshold to pass
     - len_min_read  : Minimum length of the read to pass
     - len_min_aln   : Minimum length of the read that must align to pass
-    - read          : Pysam.AlignmentSegment Object, the read that will be checked against the filters
-    - bitflag       : Used to determine which filters to use. See http://samtools.github.io/hts-specs/SAMv1.pdf
+    - read          : Pysam.AlignmentSegment Object, the read that will be
+                      checked against the filters
+    - bitflag       : Used to determine which filters to use.
+                      See http://samtools.github.io/hts-specs/SAMv1.pdf
 
     1    0x1   template having multiple segments in sequencing
     2    0x2   each segment properly aligned according to the aligner
@@ -25,21 +29,23 @@ def make_read_filter(mapq_threshold, len_min_read, len_min_aln, bitflag):
     1024 0x400 PCR or optical duplicate
     2048 0x800 supplementary alignment
 
-    If bitflag is set, then ~(bitflag & ---) will evaluate to False. In order for the read to pass, then the corresponding read property must be False so that ~property is evaluated to True.
+    If bitflag is set, then ~(bitflag & ---) will evaluate to False. In order
+    for the read to pass, then the corresponding read property must be False
+    so that ~property is evaluated to True.
     """
     def read_filter(read):
         cigar = read.cigarstring
 
-        if  (   (read.mapping_quality > mapq_threshold)
-            and ((read.query_length > len_min_read))    
-            and ((read.query_alignment_length > len_min_aln))
-            and ((cigar.count("S") <= 2) and (cigar.count("H") <= 2))
-            and (~read.is_unmapped or ~(bitflag & 4))
-            and (~read.is_reverse or ~(bitflag & 16))
-            and (~read.is_secondary or ~(bitflag & 256))
-            and (~read.is_qcfail or ~(bitflag & 512))            
-            and (~read.is_duplicate or ~(bitflag & 1024))
-            and (~read.is_supplementary or ~(bitflag & 2048))):            
+        if ((read.mapping_quality > mapq_threshold)
+                and ((read.query_length > len_min_read))
+                and ((read.query_alignment_length > len_min_aln))
+                and ((cigar.count("S") <= 2) and (cigar.count("H") <= 2))
+                and (~read.is_unmapped or ~(bitflag & 4))
+                and (~read.is_reverse or ~(bitflag & 16))
+                and (~read.is_secondary or ~(bitflag & 256))
+                and (~read.is_qcfail or ~(bitflag & 512))
+                and (~read.is_duplicate or ~(bitflag & 1024))
+                and (~read.is_supplementary or ~(bitflag & 2048))):
 
             return True
         return False
@@ -57,7 +63,7 @@ def mapQ_stats_per_read(reads, verbose=False, comment=""):
 
     pile = []
     for name in reads.keys():
-        for read in reads[name]: # Iterate through the reads
+        for read in reads[name]:  # Iterate through the reads
             Qs = read.query_qualities
             if Qs is not None:
                 pile.append(compute_mean_med_std(Qs))
@@ -74,6 +80,7 @@ def mapQ_stats_per_read(reads, verbose=False, comment=""):
 
     return means, meds, stds
 
+
 def mapQ_stats_aligned_readsegment(reads, verbose):
     """
     Compute mean/std/len of each read grouped by aligned vs. unaligned regions
@@ -89,15 +96,27 @@ def mapQ_stats_aligned_readsegment(reads, verbose):
     stds_out = []
     lens_out = []
     for name in reads.keys():
-        for read in reads[name]: # Iterate through the reads
+        for read in reads[name]:  # Iterate through the reads
             # Inside aligned region
             Q_in = read.query_alignment_qualities
-            means_in.append(np.mean(Q_in))
-            stds_in.append(np.std(Q_in))
+            # Q_in is None implies that there are no alignment qualities, so we
+            # append dummy values
+            if Q_in is None:
+                means_in.append(0)
+                stds_in.append(0)
+            else:
+                means_in.append(np.mean(Q_in))
+                stds_in.append(np.std(Q_in))
             lens_in.append(read.query_alignment_length)
             # Outside aligned region
             Q = read.query_qualities
-            Q_out = np.concatenate([Q[:read.query_alignment_start], Q[read.query_alignment_end:]])
+            # There may not be qualities for the read, so creating an empty
+            # array if there aren't any.
+            if Q is None:
+                Q_out = np.array([])
+            else:
+                Q_out = np.concatenate([Q[:read.query_alignment_start],
+                                        Q[read.query_alignment_end:]])
             if (read.query_length != read.query_alignment_length) and (Q_out.size > 0): # Sometimes the returned Q_out is an emptry array.
                 means_out.append(np.mean(Q_out))
                 stds_out.append(np.std(Q_out))
@@ -112,6 +131,7 @@ def mapQ_stats_aligned_readsegment(reads, verbose):
         print("Time taken: %.2f seconds" % (end-start))
 
     return means_in, stds_in, lens_in, means_out, stds_out, lens_out
+
 
 def reconstruct_all_alignments(contigs, reads, len_max_indel=20, correct_orientation=True, len_trim_contig_edge=0, verbose=False):
     """
@@ -130,7 +150,7 @@ def reconstruct_all_alignments(contigs, reads, len_max_indel=20, correct_orienta
     lens = []
     for (name, contig) in contigs:
         if name in reads.keys():
-            for read in reads[name]: # Iterate through the reads
+            for read in reads[name]:  # Iterate through the reads
                 alns.append(reconstruct_alignment(contig, read, len_max_indel, correct_orientation, len_trim_contig_edge))
                 lens.append(read.query_length)
 
@@ -139,8 +159,9 @@ def reconstruct_all_alignments(contigs, reads, len_max_indel=20, correct_orienta
         print("Time taken: %.2f seconds" % (end-start))
 
     return alns, lens
-    
-def reconstruct_alignment(reference, read, len_max_indel = 20, correct_orientation=True, len_trim_contig_edge=0):
+
+
+def reconstruct_alignment(reference, read, len_max_indel=20, correct_orientation=True, len_trim_contig_edge=0):
     """
     Given reference string and PySam readsegment object read, return a reconstructed alignment of the read and the reference. Example:
 
@@ -164,7 +185,7 @@ def reconstruct_alignment(reference, read, len_max_indel = 20, correct_orientati
     query = read.query_sequence
 
     # Get the Q array
-    Q_arr = read.query_alignment_qualities # Full qualities
+    Q_arr = read.query_alignment_qualities  # Full qualities
     if Q_arr is None:
         Q_arr = np.zeros(read.query_alignment_length)
 
@@ -214,7 +235,7 @@ def reconstruct_alignment(reference, read, len_max_indel = 20, correct_orientati
     # This is not exact but should be sufficiently accurate
     len_trim, len_trim2 = None, None
     if (read.reference_start < len_trim_contig_edge):
-        len_trim = len_trim_contig_edge - read.reference_start 
+        len_trim = len_trim_contig_edge - read.reference_start
         ref = ref[len_trim:]
         rd  = rd[len_trim:]
         cig = cig[len_trim:]
@@ -237,6 +258,7 @@ def reconstruct_alignment(reference, read, len_max_indel = 20, correct_orientati
 
     return ref, rd, cig, Qs
 
+
 def modify_cigar(ref, rd, cig):
     """
     Instead of "M" for "match", use "=" and "X".
@@ -252,9 +274,10 @@ def modify_cigar(ref, rd, cig):
             cig_modified.append(c)
     return "".join(cig_modified)
 
+
 def find_hp(rd, h=3):
     """
-    Find a homopolymer string corresponding to a single string. 
+    Find a homopolymer string corresponding to a single string.
 
     Example:
     rd = "ACGTTT-CG"
@@ -281,8 +304,8 @@ def find_hp(rd, h=3):
                 # If the last "match" was "-", then revert back
                 while rd[idx_end-1] == "-":
                     idx_end -= 1
-                hp[idx] = "S" # Start of the homopolymer
-                for m in xrange(idx+1, idx_end-1, 1):
+                hp[idx] = "S"  # Start of the homopolymer
+                for m in range(idx+1, idx_end-1, 1):
                     hp[m] = "H"
                 hp[idx_end-1] = "E"
 
@@ -293,13 +316,14 @@ def find_hp(rd, h=3):
 
     return hp
 
+
 def find_hp_region(ref, rd, cig, len_min_hp=3):
     """
     Given a reconstructed alignment, returns the corresponding homopolymer string.
 
     Args
     ----
-    - len_min_hp: minimum repeated character in order for a region to be considered a homopolymer.    
+    - len_min_hp: minimum repeated character in order for a region to be considered a homopolymer.
     """
     # Find homopolymer region solely based on the reference.
     hp = find_hp(ref, len_min_hp)
@@ -308,7 +332,7 @@ def find_hp_region(ref, rd, cig, len_min_hp=3):
     idx = 0
     while idx < (len_ref-1):
         hc = hp[idx] # Current hp character
-        ltr = ref[idx] # Current letter        
+        ltr = ref[idx] # Current letter
         if hc == "S": # If start of the homopolymer region, check left to see if there is an insertion of the same character
             idx_hc = idx-1
             while (idx_hc >= 0) and (cig[idx_hc] in ["I", "="]) and (rd[idx_hc] == ltr):
@@ -319,7 +343,7 @@ def find_hp_region(ref, rd, cig, len_min_hp=3):
         elif hc == "E":
             idx_hc = idx+1
             while (idx_hc <= (len_ref-1)) and (cig[idx_hc] in ["I", "="]) and (rd[idx_hc] == ltr):
-                hp[idx_hc-1] = "H"                
+                hp[idx_hc-1] = "H"
                 hp[idx_hc] = "E"
                 idx_hc += 1
             idx = idx_hc
@@ -345,7 +369,7 @@ def get_hist_len_hp(contigs, len_min_hp, len_max_hp, len_trim_contig_edge, verbo
         while idx < (len_ref-len_trim_contig_edge-1): # Could be a tighter bound
             ltr = ref[idx] # Get the current letter
             if ltr in bases:
-                idx_end = idx 
+                idx_end = idx
                 while ref[idx_end] == ltr: # Update idx_end until the character does not match
                     idx_end += 1
                     if idx_end > (len_ref-len_trim_contig_edge-1):
@@ -366,20 +390,21 @@ def get_hist_len_hp(contigs, len_min_hp, len_max_hp, len_trim_contig_edge, verbo
 
     return hist_len_hp
 
+
 def phredQ_vs_error(alns, max_Q=100, verbose=False):
     """
     Given the reconstructed alignments, for each recorded Q value compute the various error rates. Note that deleted characters can't be associated with a phred score.
     """
     if verbose:
         print("Computing computed Q vs. empirical Q")
-        start = time() 
+        start = time()
 
     # Counter dictionary for the Q-score
     # - First level: Integer key corresponding to the recorded Q-socre
     # - Second level: Counter for various types of errors.
     # Note that Q-score corresponding to deletin is zero.
     Q_dict = {}
-    for i in xrange(max_Q):
+    for i in range(max_Q):
         Q_dict[i] = {"X": 0, "I": 0, "=": 0, "D": 0}
 
     # Count errors corresponding to each q
@@ -425,12 +450,12 @@ def count_errors_per_read(alns, verbose, skip_nonACGT=True):
     nums_sub = np.zeros(len(alns))
     nums_ins = np.zeros(len(alns))
     nums_del = np.zeros(len(alns))
-    nums_skip =  np.zeros(len(alns))
+    nums_skip = np.zeros(len(alns))
 
     for k, aln in enumerate(alns):
         ref, rd, cig, _ = aln
 
-        for i in xrange(len(ref)):
+        for i in range(len(ref)):
             if ref[i] in bases_ext:
                 c = cig[i]
                 if c == "=":
@@ -443,14 +468,15 @@ def count_errors_per_read(alns, verbose, skip_nonACGT=True):
                     nums_ins[k] += 1
             else:
                 nums_skip[k] += 1
-
-    lens_aligned = nums_match + nums_sub + nums_ins + nums_del # Alignment length
+    # Alignment length
+    lens_aligned = nums_match + nums_sub + nums_ins + nums_del
 
     if verbose:
         end = time()
         print("Time taken: %.2f seconds" % (end-start))
 
     return nums_match, nums_sub, nums_ins, nums_del, nums_skip, lens_aligned
+
 
 def count_errors_hp(alns_scrubbed, len_min_hp=3, len_max_hp=20, verbose=False):
     """
@@ -490,17 +516,17 @@ def count_errors_hp(alns_scrubbed, len_min_hp=3, len_max_hp=20, verbose=False):
                     c_hp = ref[idx] # Hmopolymer character
                 elif cig[idx] == "I":
                     num_ins += 1
-                    c_hp = rd[idx] 
+                    c_hp = rd[idx]
                 elif cig[idx] == "=": # If it's a match
-                    c_hp = ref[idx] 
+                    c_hp = ref[idx]
                 elif cig[idx] == "X": # If it's a mis-match
-                    c_hp = ref[idx] 
+                    c_hp = ref[idx]
                 else:
                     assert False
                 len_hp = 1
                 assert c_hp is not None
 
-                while hp[idx+len_hp] != "E": 
+                while hp[idx+len_hp] != "E":
                     if cig[idx+len_hp] == "D":
                         num_del += 1
                     elif cig[idx+len_hp] == "I":
@@ -532,6 +558,7 @@ def count_errors_hp(alns_scrubbed, len_min_hp=3, len_max_hp=20, verbose=False):
 
     return hist_len_hp
 
+
 def cutout_hp_region(ref, rd, cig, hp):
     len_hp = len(hp)
     ref_ex = []
@@ -548,11 +575,11 @@ def cutout_hp_region(ref, rd, cig, hp):
                 idx_end += 1
             idx_end += 1 # The first character after homopolymer region
             idx_start = idx_end
-        else: 
+        else:
             idx_end += 1
     ref = "".join(ref_ex)
     rd = "".join(rd_ex)
-    cig = "".join(cig_ex)    
+    cig = "".join(cig_ex)
 
     return ref, rd, cig
 
@@ -576,7 +603,7 @@ def count_errors(alns_scrubbed, len_min_hp=3, exclude_hp = True, len_max_indel=2
         if exclude_hp:
             print("Counting errors, excluding homopolymer regions")
         else:
-            print("Counting errors, including homopolymer regions")            
+            print("Counting errors, including homopolymer regions")
         start = time()
 
     # Tally mismatches outside indel regions
@@ -598,12 +625,12 @@ def count_errors(alns_scrubbed, len_min_hp=3, exclude_hp = True, len_max_indel=2
         while idx <= (len_ref-1):
             c = cig[idx]
             if c in ["X", "="]: # Match
-               sub_matrix[base2int[ref[idx]], base2int[rd[idx]]] += 1 
+               sub_matrix[base2int[ref[idx]], base2int[rd[idx]]] += 1
                idx += 1
             elif c == "D": # Deletion
                 num_del = 0
                 while cig[idx] == "D":
-                    sub_matrix[base2int[ref[idx]], -1] += 1                     
+                    sub_matrix[base2int[ref[idx]], -1] += 1
                     idx += 1
                     num_del += 1
                     if idx > (len_ref-1):
@@ -613,7 +640,7 @@ def count_errors(alns_scrubbed, len_min_hp=3, exclude_hp = True, len_max_indel=2
             elif c == "I":
                 num_ins = 0
                 while cig[idx] == "I":
-                    sub_matrix[-1, base2int[rd[idx]]] += 1                     
+                    sub_matrix[-1, base2int[rd[idx]]] += 1
                     idx += 1
                     num_ins += 1
                     if idx > (len_ref-1):
@@ -628,6 +655,7 @@ def count_errors(alns_scrubbed, len_min_hp=3, exclude_hp = True, len_max_indel=2
         print("Time taken: %.2f seconds" % (end-start))
 
     return sub_matrix, hist_len_del, hist_len_ins
+
 
 def context_sub_table(alns_scrubbed, len_context_sub=7, verbose=False):
     """
@@ -661,7 +689,7 @@ def context_sub_table(alns_scrubbed, len_context_sub=7, verbose=False):
                     if counter == len_context_sub:
                         break
                 idx_end -= 1
-            
+
             for idx in xrange(idx_start, idx_end, 1):
                 c = cig[idx]
                 if c in acceptable_cigar: # If the center character of the read is not an insertion
@@ -683,7 +711,7 @@ def context_sub_table(alns_scrubbed, len_context_sub=7, verbose=False):
                         if ref[e] != "-":
                             len_right += 1
                         if (len_right == len_side_mer) or (e == (len_ref-1)):
-                            break                        
+                            break
                         e += 1
 
                     context = ref[s:e+1].replace("-", "")
@@ -700,6 +728,7 @@ def context_sub_table(alns_scrubbed, len_context_sub=7, verbose=False):
 
     return sub_matrix
 
+
 def context_ins_table(alns_scrubbed, len_context_ins=8, len_max_ins=20, verbose=False):
     """
     Compile a table of errors where each row corresponds to insertions occuring in the middle of f-mer (f = len_context_ins and even).
@@ -714,8 +743,8 @@ def context_ins_table(alns_scrubbed, len_context_ins=8, len_max_ins=20, verbose=
     # 2) tally of observed insertion length.
     hist_len_ins = np.zeros((4**len_context_ins, len_max_ins), dtype=int)
     hist_char_ins = np.zeros((4**len_context_ins, 4), dtype=int)
-    
-    acceptable_cigar = {"D", "=", "X"} 
+
+    acceptable_cigar = {"D", "=", "X"}
     len_side_mer = len_context_ins // 2
     for aln in alns_scrubbed:
         try: # Wrap the counting text inside try-except to avoid stopping the program due to a pesky indexing error.
@@ -759,7 +788,7 @@ def context_ins_table(alns_scrubbed, len_context_ins=8, len_max_ins=20, verbose=
                         if ref[e] != "-":
                             len_right += 1
                         if (len_right == len_side_mer) or (e == (len_ref-1)):
-                            break                        
+                            break
                         e += 1
 
                     # Total context
@@ -803,9 +832,10 @@ def compute_indel_rates(sub_matrix, dist_len_ins, dist_len_del):
 
     # Indel rates
     R_ins = N_ins/float(N_trans)
-    R_del = N_del/float(N_trans)    
+    R_del = N_del/float(N_trans)
 
     return R_ins, R_del
+
 
 def append_hp(aln, h):
     """
@@ -818,6 +848,7 @@ def append_hp(aln, h):
     hp = find_hp_region(ref, rd, cig, len_min_hp=h)
 
     return (ref, rd, cig, Qs, hp)
+
 
 def split_recontructed_alignment(aln):
     """
@@ -839,8 +870,9 @@ def split_recontructed_alignment(aln):
                 idx_end += 1
             idx_start = idx_end
     # Treat the last case separately
-    aln_split.append((ref[idx_start:idx_end], rd[idx_start:idx_end], cig[idx_start:idx_end], Qs[idx_start:idx_end]))    
+    aln_split.append((ref[idx_start:idx_end], rd[idx_start:idx_end], cig[idx_start:idx_end], Qs[idx_start:idx_end]))
     return aln_split
+
 
 def scrub_reconstructed_alignments(alns, h=3, verbose=False):
     """
